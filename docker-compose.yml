@@ -1,0 +1,53 @@
+services:
+  web:
+    build: .
+    container_name: sena-php-web
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./htdocs:/var/www/html
+      - ./php-dev.ini:/usr/local/etc/php/conf.d/zz-dev.ini:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      TZ: America/Bogota
+
+  db:
+    image: mariadb:11
+    container_name: sena-php-db
+    restart: unless-stopped
+    ports:
+      - "3307:3306"
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: app
+      MARIADB_USER: app
+      MARIADB_PASSWORD: app
+      TZ: America/Bogota
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 20s
+
+  adminer:
+    image: adminer:latest
+    container_name: sena-php-adminer
+    restart: unless-stopped
+    ports:
+      - "8082:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: db
+      TZ: America/Bogota
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db_data:

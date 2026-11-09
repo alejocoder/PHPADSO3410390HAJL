@@ -1,0 +1,2124 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía Maestra de Funciones PHP - Manual Interactivo</title>
+    <!-- Tailwind CSS v4 (Browser build) vía jsDelivr -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style type="text/tailwindcss">
+        /* Estrategia de modo oscuro por clase (equivalente a darkMode: 'class') */
+        @custom-variant dark (&:where(.dark, .dark *));
+
+        @theme {
+            /* Paleta personalizada "php" */
+            --color-php-light: #8892bf;
+            --color-php: #4F5B93;
+            --color-php-dark: #313854;
+            --color-php-accent: #777BB4;
+
+            /* Tipografías */
+            --font-sans: "Inter", sans-serif;
+            --font-mono: "Fira Code", Consolas, monospace;
+        }
+    </style>
+    <!-- FontAwesome icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Prism.js Theme CDN (Dark) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;500;600;700&display=swap');
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(136, 146, 191, 0.4);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(136, 146, 191, 0.7);
+        }
+
+        /* Smooth tab transitions */
+        .slide-content {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .slide-content.active {
+            display: block;
+            opacity: 1;
+        }
+        
+        pre[class*="language-"] {
+            border-radius: 0.75rem;
+            margin: 0.5rem 0 1rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+        }
+
+        .dark pre[class*="language-"] {
+            background: #1e1e2e !important;
+        }
+        
+        /* Light mode adjustments for code */
+        html:not(.dark) pre[class*="language-"] {
+            background: #f8fafc !important;
+            border: 1px solid #e2e8f0;
+        }
+        html:not(.dark) code[class*="language-"] {
+            color: #0f172a !important;
+            text-shadow: none !important;
+        }
+        html:not(.dark) .token.keyword { color: #7c3aed !important; font-weight: 600; }
+        html:not(.dark) .token.string { color: #047857 !important; }
+        html:not(.dark) .token.function { color: #0284c7 !important; }
+        html:not(.dark) .token.variable { color: #be123c !important; }
+        html:not(.dark) .token.comment { color: #64748b !important; font-style: italic; }
+        html:not(.dark) .token.operator { color: #475569 !important; }
+
+        /* Output console animation */
+        .console-output {
+            font-family: 'Fira Code', monospace;
+            transition: all 0.2s ease-in-out;
+            white-space: pre-wrap; /* CRUCIAL: Hace que los \n se vean como saltos de línea reales */
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 transition-colors duration-300 min-h-screen flex flex-col font-sans">
+
+    <!-- Top Navigation Header -->
+    <header class="bg-white/80 dark:bg-slate-900/90 backdrop-blur border-b border-slate-200 dark:border-slate-700/50 sticky top-0 z-50 px-4 py-3 transition-colors duration-300">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchSlide('welcome')">
+                <div class="bg-php text-white p-2.5 rounded-xl shadow-lg shadow-php/30 flex items-center justify-center">
+                    <i class="fa-brands fa-php text-2xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg md:text-xl tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
+                        PHP Core Functions
+                        <span class="text-xs bg-php/20 text-php dark:text-php-light px-2 py-0.5 rounded-full font-mono font-semibold">Interactive Lab</span>
+                    </h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Guía Pedagógica con Ejecución de Código en Vivo</p>
+                </div>
+            </div>
+
+            <!-- Header Actions -->
+            <div class="flex items-center space-x-3">
+                <!-- Mobile Menu Button -->
+                <button id="mobile-menu-btn" class="md:hidden p-2 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+
+                <!-- Dark/Light Theme Toggle -->
+                <button id="theme-toggle" class="flex items-center gap-2 bg-slate-200/80 dark:bg-slate-800 hover:bg-slate-300/80 dark:hover:bg-slate-700 text-amber-600 dark:text-indigo-400 px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600/50 transition-all text-sm font-medium shadow-sm">
+                    <i id="theme-toggle-dark-icon" class="fa-solid fa-moon text-indigo-400"></i>
+                    <i id="theme-toggle-light-icon" class="fa-solid fa-sun text-amber-500 hidden"></i>
+                    <span id="theme-toggle-text" class="hidden sm:inline text-slate-700 dark:text-slate-200">Modo Oscuro</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="flex-1 max-w-7xl w-full mx-auto flex flex-col md:flex-row gap-6 p-4 md:p-6">
+
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="w-full md:w-72 bg-white dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-700/40 p-4 shrink-0 hidden md:block shadow-sm transition-colors duration-300">
+            <div class="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 px-3 mb-3 flex items-center justify-between">
+                <span>Módulos Pedagógicos</span>
+                <span class="bg-slate-100 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 text-[10px] px-1.5 py-0.5 rounded">10 Módulos</span>
+            </div>
+            <nav class="space-y-1">
+                <button onclick="switchSlide('welcome')" class="nav-btn active w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-left bg-php text-white shadow-md">
+                    <i class="fa-solid fa-graduation-cap w-5 text-center"></i>
+                    <span>Inicio & Visión General</span>
+                </button>
+
+                <div class="pt-3 pb-1 px-3 text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Arreglos y Verificación</div>
+                <button onclick="switchSlide('in_array')" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all text-left">
+                    <i class="fa-solid fa-magnifying-glass w-5 text-center text-blue-500 dark:text-blue-400"></i>
+                    <span>in_array()</span>
+                </button>
+                <button onclick="switchSlide('is_array')" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all text-left">
+                    <i class="fa-solid fa-layer-group w-5 text-center text-emerald-500 dark:text-emerald-400"></i>
+                    <span>is_array()</span>
+                </button>
+
+                <div class="pt-3 pb-1 px-3 text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Sistema de Archivos</div>
+                <button onclick="switchSlide('is_file')" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all text-left">
+                    <i class="fa-solid fa-file-circle-check w-5 text-center text-amber-500 dark:text-amber-400"></i>
+                    <span>is_file()</span>
+                </button>
+                <button onclick="switchSlide('require')" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all text-left">
+                    <i class="fa-solid fa-file-import w-5 text-center text-purple-500 dark:text-purple-400"></i>
+                    <span>require()</span>
+                </button>
+                <button onclick="switchSlide('require_once')" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all text-left">
+                    <i class="fa-solid fa-shield-halved w-5 text-center text-indigo-500 dark:text-indigo-400"></i>
+                    <span>require_once()</span>
+                </button>
+
+                <div class="pt-3 pb-1 px-3 text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Base de Datos & Debug</div>
+                <button onclick="switchSlide('mysql_vs_mysqli')" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all text-left">
+                    <i class="fa-solid fa-code-compare w-5 text-center text-cyan-500 dark:text-cyan-400"></i>
+                    <span>mysql vs mysqli</span>
+                </button>
+                <button onclick="switchSlide('mysqli')" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all text-left">
+                    <i class="fa-solid fa-database w-5 text-center text-cyan-500 dark:text-cyan-400"></i>
+                    <span>mysqli()</span>
+                </button>
+                <button onclick="switchSlide('print_r')" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all text-left">
+                    <i class="fa-solid fa-bug w-5 text-center text-rose-500 dark:text-rose-400"></i>
+                    <span>print_r()</span>
+                </button>
+
+                <div class="pt-3 pb-1 px-3 text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">Seguridad y Sesiones</div>
+                <button onclick="switchSlide('htmlentities')" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all text-left">
+                    <i class="fa-solid fa-lock w-5 text-center text-red-500 dark:text-red-400"></i>
+                    <span>htmlentities()</span>
+                </button>
+                <button onclick="switchSlide('session_start')" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60 transition-all text-left">
+                    <i class="fa-solid fa-user-gear w-5 text-center text-teal-500 dark:text-teal-400"></i>
+                    <span>session_start()</span>
+                </button>
+            </nav>
+        </aside>
+
+        <!-- Presentation Slides Content Area -->
+        <main class="flex-1 bg-white dark:bg-slate-900/40 rounded-2xl border border-slate-200 dark:border-slate-700/40 p-4 md:p-8 min-h-[600px] flex flex-col justify-between overflow-x-hidden shadow-sm transition-colors duration-300">
+            
+            <div id="slides-container" class="flex-1">
+
+                <!-- SLIDE: WELCOME -->
+                <div id="slide-welcome" class="slide-content active space-y-6">
+                    <div class="border-b border-slate-200 dark:border-slate-700/60 pb-6">
+                        <div class="inline-flex items-center gap-2 bg-php/10 text-php dark:text-php-light px-3 py-1 rounded-full text-sm font-semibold mb-3">
+                            <i class="fa-solid fa-flask"></i> Laboratorio Interactivo PHP
+                        </div>
+                        <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white">Guía Maestra de Funciones Clave en PHP</h2>
+                        <p class="text-slate-600 dark:text-slate-300 mt-2 text-lg">Aprende con teoría rigurosa, ejemplos reales y consolas de ejecución de código en tiempo real.</p>
+                    </div>
+
+                    <div class="grid md:grid-cols-3 gap-4 my-6">
+                        <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                            <i class="fa-solid fa-terminal text-2xl text-blue-500 dark:text-blue-400 mb-3"></i>
+                            <h3 class="font-bold text-slate-900 dark:text-slate-200 mb-1">Simulación Interactiva</h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">Prueba los parámetros y simula la ejecución en vivo directamente en cada tarjeta de código.</p>
+                        </div>
+                        <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                            <i class="fa-solid fa-code-branch text-2xl text-emerald-500 dark:text-emerald-400 mb-3"></i>
+                            <h3 class="font-bold text-slate-900 dark:text-slate-200 mb-1">3 Niveles por Función</h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">Cada tema abarca desde sintaxis elemental hasta casos reales de MVC, arquitectura y seguridad.</p>
+                        </div>
+                        <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                            <i class="fa-solid fa-shield-cat text-2xl text-amber-500 dark:text-amber-400 mb-3"></i>
+                            <h3 class="font-bold text-slate-900 dark:text-slate-200 mb-1">Buenas Prácticas</h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">Evita errores fatales, vulnerabilidades XSS, inyección SQL e inconsistencias de tipos.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SLIDE 1: in_array -->
+                <div id="slide-in_array" class="slide-content space-y-6">
+                    <div class="border-b border-slate-200 dark:border-slate-700/60 pb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="p-3 bg-blue-500/10 text-blue-500 dark:text-blue-400 rounded-xl">
+                                <i class="fa-solid fa-magnifying-glass text-2xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white font-mono">in_array()</h2>
+                                <p class="text-sm text-slate-500 dark:text-slate-400">Verificación de pertenencia dentro de un arreglo</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                        <h3 class="text-lg font-bold text-blue-600 dark:text-blue-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-info"></i> 1. ¿Para qué sirve?
+                        </h3>
+                        <p class="text-slate-700 dark:text-slate-300 leading-relaxed">
+                            Busca un valor determinado dentro de un array. Devuelve <code class="text-emerald-600 dark:text-emerald-400 font-semibold">true</code> si el elemento se encuentra en el arreglo y <code class="text-rose-600 dark:text-rose-400 font-semibold">false</code> en caso contrario. Es ideal para validar permisos, roles, extensiones de archivo permitidas o selecciones de usuario.
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                        <h3 class="text-lg font-bold text-blue-600 dark:text-blue-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-code"></i> 2. Sintaxis y Parámetros
+                        </h3>
+                        <pre><code class="language-php">in_array(mixed $needle, array $haystack, bool $strict = false): bool</code></pre>
+                        <ul class="list-disc list-inside text-sm text-slate-700 dark:text-slate-300 space-y-1 mt-2">
+                            <li><strong class="text-amber-600 dark:text-amber-300">$needle:</strong> El valor buscado (aguja).</li>
+                            <li><strong class="text-amber-600 dark:text-amber-300">$haystack:</strong> El arreglo en el que se realiza la búsqueda (pajar).</li>
+                            <li><strong class="text-amber-600 dark:text-amber-300">$strict:</strong> (Opcional) Si se define como <code class="text-emerald-600 dark:text-emerald-400 font-semibold">true</code>, evalúa también el <em>tipo de dato</em> (coincidencia estricta).</li>
+                        </ul>
+                    </div>
+
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-bold text-blue-600 dark:text-blue-400 flex items-center gap-2">
+                            <i class="fa-solid fa-laptop-code"></i> 3. Ejemplos Prácticos & Simulación
+                        </h3>
+                        
+                        <!-- Básico -->
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="bg-blue-500/10 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Nivel Básico: Verificación Simple</span>
+                            </div>
+                            <pre><code class="language-php">&lt;?php
+$frutas = ["manzana", "banana", "naranja"];
+$busqueda = "$VALOR_BUSQUEDA";
+
+if (in_array($busqueda, $frutas)) {
+    echo "¡'$busqueda' encontrada!";
+} else {
+    echo "'$busqueda' NO está en la lista.";
+}
+?&gt;</code></pre>
+                            <div class="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 flex flex-col sm:flex-row gap-3 items-center justify-between">
+                                <div class="flex items-center gap-2 w-full sm:w-auto">
+                                    <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">Buscar fruta:</label>
+                                    <input type="text" id="in_array_b1_input" value="banana" class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <button onclick="runInArrayBasic()" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Ejecutar
+                                </button>
+                            </div>
+                            <div id="in_array_b1_out" class="console-output bg-slate-950 text-emerald-400 text-xs p-3 rounded-lg border border-slate-800 hidden"></div>
+                        </div>
+
+                        <!-- Intermedio -->
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                            <span class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 border border-emerald-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Nivel Intermedio: Control de Permisos</span>
+                            <pre><code class="language-php">&lt;?php
+$rolesPermitidos = ['admin', 'editor', 'superadmin'];
+$usuarioRol = "$ROL_SELECCIONADO";
+
+if (!in_array($usuarioRol, $rolesPermitidos)) {
+    echo "HTTP 403: Acceso Denegado para rol '$usuarioRol'.";
+} else {
+    echo "HTTP 200: Bienvenido al panel con rol '$usuarioRol'.";
+}
+?&gt;</code></pre>
+                            <div class="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 flex flex-col sm:flex-row gap-3 items-center justify-between">
+                                <div class="flex items-center gap-2 w-full sm:w-auto">
+                                    <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">Rol simulado:</label>
+                                    <select id="in_array_int_select" class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                        <option value="admin">admin</option>
+                                        <option value="editor">editor</option>
+                                        <option value="superadmin">superadmin</option>
+                                        <option value="invitado">invitado</option>
+                                        <option value="cliente">cliente</option>
+                                    </select>
+                                </div>
+                                <button onclick="runInArrayInter()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Probar Permisos
+                                </button>
+                            </div>
+                            <div id="in_array_int_out" class="console-output bg-slate-950 text-emerald-400 text-xs p-3 rounded-lg border border-slate-800 hidden"></div>
+                        </div>
+
+                        <!-- Avanzado -->
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                            <span class="bg-purple-500/10 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Nivel Avanzado: Comparación Estricta vs No Estricta</span>
+                            <pre><code class="language-php">&lt;?php
+$codigosValidos = [100, 200, 300]; // Arreglo de Integers
+$entrada = "$VALOR_ENTRADA";       // String
+
+$noEstricto = in_array($entrada, $codigosValidos, false);
+$estricto   = in_array($entrada, $codigosValidos, true);
+?&gt;</code></pre>
+                            <div class="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 flex flex-col sm:flex-row gap-3 items-center justify-between">
+                                <div class="flex items-center gap-2 w-full sm:w-auto">
+                                    <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">Entrada (String):</label>
+                                    <input type="text" id="in_array_adv_input" value="200" class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                </div>
+                                <button onclick="runInArrayAdv()" class="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Comparar $strict
+                                </button>
+                            </div>
+                            <div id="in_array_adv_out" class="console-output bg-slate-950 text-emerald-400 text-xs p-3 rounded-lg border border-slate-800 hidden"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-rose-50 dark:bg-rose-950/30 p-5 rounded-2xl border border-rose-200 dark:border-rose-800/40">
+                        <h3 class="text-lg font-bold text-rose-600 dark:text-rose-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation"></i> 4. Errores Comunes y Buenas Prácticas
+                        </h3>
+                        <ul class="space-y-2 text-sm text-slate-700 dark:text-slate-300">
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-xmark text-rose-500 mt-1"></i>
+                                <span><strong>Error:</strong> Olvidar el parámetro estricto <code class="text-amber-600 dark:text-amber-300">$strict = true</code>. Sin esto, cadenas no numéricas pueden coincidir inesperadamente con <code class="text-amber-600 dark:text-amber-300">0</code> en comparaciones débiles.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-check text-emerald-500 dark:text-emerald-400 mt-1"></i>
+                                <span><strong>Buena Práctica:</strong> Pasa siempre <code class="text-emerald-600 dark:text-emerald-400 font-semibold">true</code> como tercer parámetro a menos que explícitamente requieras coerción de tipos.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- SLIDE 2: is_array -->
+                <div id="slide-is_array" class="slide-content space-y-6">
+                    <div class="border-b border-slate-200 dark:border-slate-700/60 pb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="p-3 bg-emerald-500/10 text-emerald-500 dark:text-emerald-400 rounded-xl">
+                                <i class="fa-solid fa-layer-group text-2xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white font-mono">is_array()</h2>
+                                <p class="text-sm text-slate-500 dark:text-slate-400">Comprobación de tipos de datos para arreglos</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                        <h3 class="text-lg font-bold text-emerald-600 dark:text-emerald-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-info"></i> 1. ¿Para qué sirve?
+                        </h3>
+                        <p class="text-slate-700 dark:text-slate-300 leading-relaxed">
+                            Evalúa si una variable dada es un arreglo. Retorna <code class="text-emerald-600 dark:text-emerald-400 font-semibold">true</code> si es un array o <code class="text-rose-600 dark:text-rose-400 font-semibold">false</code> si es de cualquier otro tipo.
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                        <h3 class="text-lg font-bold text-emerald-600 dark:text-emerald-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-code"></i> 2. Sintaxis y Parámetros
+                        </h3>
+                        <pre><code class="language-php">is_array(mixed $value): bool</code></pre>
+                    </div>
+
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-2">
+                            <i class="fa-solid fa-laptop-code"></i> 3. Ejemplos Prácticos & Simulación
+                        </h3>
+
+                        <!-- Básico -->
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                            <span class="bg-blue-500/10 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Nivel Básico: Verificación de Tipo</span>
+                            <pre><code class="language-php">&lt;?php
+$variable = $VALOR_EVALUADO;
+var_dump(is_array($variable));
+?&gt;</code></pre>
+                            <div class="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 flex flex-col sm:flex-row gap-3 items-center justify-between">
+                                <div class="flex items-center gap-2 w-full sm:w-auto">
+                                    <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">Variable a probar:</label>
+                                    <select id="is_array_b1_select" class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                        <option value="array">["PHP", "SQL"] (Array)</option>
+                                        <option value="string">"Hola Mundo" (String)</option>
+                                        <option value="number">12345 (Integer)</option>
+                                        <option value="null">null (Null)</option>
+                                    </select>
+                                </div>
+                                <button onclick="runIsArrayBasic()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Probar var_dump
+                                </button>
+                            </div>
+                            <div id="is_array_b1_out" class="console-output bg-slate-950 text-emerald-400 text-xs p-3 rounded-lg border border-slate-800 hidden"></div>
+                        </div>
+
+                        <!-- Intermedio -->
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                            <span class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 border border-emerald-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Nivel Intermedio: Parseo Seguro de JSON API</span>
+                            <pre><code class="language-php">&lt;?php
+$json = '$JSON_INPUT';
+$data = json_decode($json, true);
+
+if (is_array($data) && isset($data['items'])) {
+    echo "Éxito: Se encontraron " . count($data['items']) . " elementos.";
+} else {
+    echo "Error: Estructura JSON no válida o corrupta.";
+}
+?&gt;</code></pre>
+                            <div class="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 flex flex-col sm:flex-row gap-3 items-center justify-between">
+                                <div class="flex items-center gap-2 w-full sm:w-auto">
+                                    <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">JSON de entrada:</label>
+                                    <select id="is_array_int_select" class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                        <option value="valid">{"items": ["A", "B", "C"]} (Válido)</option>
+                                        <option value="invalid">"Texto Plano Sin Estructura" (Inválido)</option>
+                                        <option value="empty">{} (Objeto Vacío)</option>
+                                    </select>
+                                </div>
+                                <button onclick="runIsArrayInter()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Validar JSON
+                                </button>
+                            </div>
+                            <div id="is_array_int_out" class="console-output bg-slate-950 text-emerald-400 text-xs p-3 rounded-lg border border-slate-800 hidden"></div>
+                        </div>
+
+                        <!-- Avanzado -->
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                            <span class="bg-purple-500/10 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Nivel Avanzado: Sanitización Recursiva</span>
+                            <pre><code class="language-php">&lt;?php
+function sanitize(mixed $input): mixed {
+    if (is_array($input)) {
+        return array_map('sanitize', $input); // Recursión
+    }
+    return htmlspecialchars((string)$input);
+}
+?&gt;</code></pre>
+                            <div class="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 flex items-center justify-between">
+                                <span class="text-xs text-slate-600 dark:text-slate-300 font-medium">Procesar Arreglo Anidado con XSS</span>
+                                <button onclick="runIsArrayAdv()" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Ejecutar Sanitización
+                                </button>
+                            </div>
+                            <div id="is_array_adv_out" class="console-output bg-slate-950 text-emerald-400 text-xs p-3 rounded-lg border border-slate-800 hidden"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-rose-50 dark:bg-rose-950/30 p-5 rounded-2xl border border-rose-200 dark:border-rose-800/40">
+                        <h3 class="text-lg font-bold text-rose-600 dark:text-rose-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation"></i> 4. Errores Comunes y Buenas Prácticas
+                        </h3>
+                        <ul class="space-y-2 text-sm text-slate-700 dark:text-slate-300">
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-xmark text-rose-500 mt-1"></i>
+                                <span><strong>Error:</strong> Asumir que un objeto de tipo <code class="text-amber-600 dark:text-amber-300">ArrayObject</code> devuelve true. Solo detecta arreglos primitivos.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- SLIDE 3: is_file -->
+                <div id="slide-is_file" class="slide-content space-y-6">
+                    <div class="border-b border-slate-200 dark:border-slate-700/60 pb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="p-3 bg-amber-500/10 text-amber-500 dark:text-amber-400 rounded-xl">
+                                <i class="fa-solid fa-file-circle-check text-2xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white font-mono">is_file()</h2>
+                                <p class="text-sm text-slate-500 dark:text-slate-400">Verificación de existencia de archivos regulares</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                        <h3 class="text-lg font-bold text-amber-600 dark:text-amber-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-info"></i> 1. ¿Para qué sirve?
+                        </h3>
+                        <p class="text-slate-700 dark:text-slate-300 leading-relaxed">
+                            Determina si la ruta especificada existe y corresponde a un <strong>archivo regular</strong> (no un directorio).
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                        <h3 class="text-lg font-bold text-amber-600 dark:text-amber-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-code"></i> 2. Sintaxis y Parámetros
+                        </h3>
+                        <pre><code class="language-php">is_file(string $filename): bool</code></pre>
+                    </div>
+
+                    <!-- Ejemplos -->
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-bold text-amber-600 dark:text-amber-400 flex items-center gap-2">
+                            <i class="fa-solid fa-laptop-code"></i> 3. Ejemplos Prácticos & Simulación
+                        </h3>
+
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                            <span class="bg-blue-500/10 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Nivel Básico: Comprobar Ruta</span>
+                            <pre><code class="language-php">&lt;?php
+$path = "$RUTA_SISTEMA";
+if (is_file($path)) {
+    echo "Válido: Es un archivo regular.";
+} else {
+    echo "Inválido: No existe o es un directorio.";
+}
+?&gt;</code></pre>
+                            <div class="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 flex flex-col sm:flex-row gap-3 items-center justify-between">
+                                <div class="flex items-center gap-2 w-full sm:w-auto">
+                                    <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">Ruta simulada:</label>
+                                    <select id="is_file_b1_select" class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-amber-500">
+                                        <option value="config.json">/app/config.json (Archivo)</option>
+                                        <option value="uploads">/app/uploads/ (Directorio)</option>
+                                        <option value="missing.txt">/app/missing.txt (Inexistente)</option>
+                                    </select>
+                                </div>
+                                <button onclick="runIsFileBasic()" class="w-full sm:w-auto bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Validar Ruta
+                                </button>
+                            </div>
+                            <div id="is_file_b1_out" class="console-output bg-slate-950 text-emerald-400 text-xs p-3 rounded-lg border border-slate-800 hidden"></div>
+                        </div>
+
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                            <span class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 border border-emerald-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Nivel Intermedio: Carga de Vista MVC</span>
+                            <pre><code class="language-php">&lt;?php
+$template = "$VISTA";
+$path = "views/{$template}.php";
+
+if (is_file($path)) {
+    echo "Renderizando la vista '{$template}.php'...";
+} else {
+    echo "404 Error: La vista '{$template}' no existe.";
+}
+?&gt;</code></pre>
+                            <div class="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 flex flex-col sm:flex-row gap-3 items-center justify-between">
+                                <div class="flex items-center gap-2 w-full sm:w-auto">
+                                    <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">Nombre de Vista:</label>
+                                    <input type="text" id="is_file_int_input" value="home" class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                </div>
+                                <button onclick="runIsFileInter()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Renderizar Vista
+                                </button>
+                            </div>
+                            <div id="is_file_int_out" class="console-output bg-slate-950 text-emerald-400 text-xs p-3 rounded-lg border border-slate-800 hidden"></div>
+                        </div>
+
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                            <span class="bg-purple-500/10 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Nivel Avanzado: Protección Path Traversal</span>
+                            <pre><code class="language-php">&lt;?php
+// Prevención de lectura maliciosa de archivos fuera de directorio
+if (!is_file($realPath) || !str_starts_with($realPath, $allowedDir)) {
+    throw new SecurityException("Acceso Denegado por Path Traversal.");
+}
+?&gt;</code></pre>
+                            <div class="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 flex items-center justify-between">
+                                <span class="text-xs text-slate-600 dark:text-slate-300 font-medium">Simular ataque: '../../etc/passwd'</span>
+                                <button onclick="runIsFileAdv()" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Testear Seguridad
+                                </button>
+                            </div>
+                            <div id="is_file_adv_out" class="console-output bg-slate-950 text-emerald-400 text-xs p-3 rounded-lg border border-slate-800 hidden"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-rose-50 dark:bg-rose-950/30 p-5 rounded-2xl border border-rose-200 dark:border-rose-800/40">
+                        <h3 class="text-lg font-bold text-rose-600 dark:text-rose-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation"></i> 4. Errores Comunes
+                        </h3>
+                        <p class="text-sm text-slate-700 dark:text-slate-300">
+                            Confundir con <code class="text-amber-600 dark:text-amber-300">file_exists()</code>. Si la ruta es una carpeta, <code class="text-amber-600 dark:text-amber-300">file_exists()</code> es true pero <code class="text-amber-600 dark:text-amber-300">is_file()</code> retorna false.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- SLIDE: mysql vs mysqli vs PDO -->
+                <div id="slide-mysql_vs_mysqli" class="slide-content space-y-6">
+                    <div class="border-b border-slate-200 dark:border-slate-700/60 pb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="p-3 bg-cyan-500/10 text-cyan-500 dark:text-cyan-400 rounded-xl">
+                                <i class="fa-solid fa-code-compare text-2xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white font-mono">mysql vs mysqli vs PDO</h2>
+                                <p class="text-sm text-slate-500 dark:text-slate-400">Qué usar hoy, qué quedó obsoleto y cómo migrar sin romper la aplicación</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                        <h3 class="text-lg font-bold text-cyan-600 dark:text-cyan-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-clock-rotate-left"></i> 1. Contexto: la extensión mysql_* ya no existe
+                        </h3>
+                        <p class="text-slate-700 dark:text-slate-300 leading-relaxed">
+                            La extensión original <code class="text-amber-600 dark:text-amber-300">mysql_*</code> fue deprecada en PHP 5.5 y <strong class="text-rose-600 dark:text-rose-400">eliminada en PHP 7.0</strong>. Sus funciones (<code class="text-amber-600 dark:text-amber-300">mysql_connect()</code>, <code class="text-amber-600 dark:text-amber-300">mysql_query()</code>, <code class="text-amber-600 dark:text-amber-300">mysql_fetch_assoc()</code>) provocan un <em>Fatal error</em> en cualquier versión moderna. <code class="text-cyan-600 dark:text-cyan-400 font-semibold">mysqli</code> significa <strong>MySQL Improved</strong> y es la evolución oficial para MySQL/MariaDB; <code class="text-cyan-600 dark:text-cyan-400 font-semibold">PDO</code> es una capa de abstracción que permite trabajar con más de una docena de motores.
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                        <h3 class="text-lg font-bold text-cyan-600 dark:text-cyan-400 mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-table-list"></i> 2. Comparativa rápida
+                        </h3>
+                        <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700/60">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-slate-100 dark:bg-slate-800 text-xs uppercase tracking-wide text-slate-600 dark:text-slate-300">
+                                    <tr>
+                                        <th class="px-3 py-2.5">Característica</th>
+                                        <th class="px-3 py-2.5 text-rose-600 dark:text-rose-400">mysql_*</th>
+                                        <th class="px-3 py-2.5 text-cyan-600 dark:text-cyan-400">mysqli</th>
+                                        <th class="px-3 py-2.5 text-emerald-600 dark:text-emerald-400">PDO</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-200 dark:divide-slate-700/60 text-slate-700 dark:text-slate-300">
+                                    <tr>
+                                        <td class="px-3 py-2.5 font-semibold">Estado</td>
+                                        <td class="px-3 py-2.5 text-rose-600 dark:text-rose-400 font-semibold">Eliminada (PHP 7.0)</td>
+                                        <td class="px-3 py-2.5 text-emerald-600 dark:text-emerald-400 font-semibold">Activa</td>
+                                        <td class="px-3 py-2.5 text-emerald-600 dark:text-emerald-400 font-semibold">Activa</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-3 py-2.5 font-semibold">Motores</td>
+                                        <td class="px-3 py-2.5">Solo MySQL</td>
+                                        <td class="px-3 py-2.5">MySQL / MariaDB</td>
+                                        <td class="px-3 py-2.5">MySQL, PostgreSQL, SQLite, SQL Server…</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-3 py-2.5 font-semibold">Estilo</td>
+                                        <td class="px-3 py-2.5">Solo procedural</td>
+                                        <td class="px-3 py-2.5">POO y procedural</td>
+                                        <td class="px-3 py-2.5">Solo POO</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-3 py-2.5 font-semibold">Prepared statements</td>
+                                        <td class="px-3 py-2.5 text-rose-600 dark:text-rose-400">No</td>
+                                        <td class="px-3 py-2.5 text-emerald-600 dark:text-emerald-400">Sí (<code>?</code>)</td>
+                                        <td class="px-3 py-2.5 text-emerald-600 dark:text-emerald-400">Sí (<code>?</code> y <code>:nombre</code>)</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-3 py-2.5 font-semibold">Transacciones</td>
+                                        <td class="px-3 py-2.5 text-rose-600 dark:text-rose-400">Muy limitadas</td>
+                                        <td class="px-3 py-2.5 text-emerald-600 dark:text-emerald-400">Sí</td>
+                                        <td class="px-3 py-2.5 text-emerald-600 dark:text-emerald-400">Sí</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-3 py-2.5 font-semibold">Errores</td>
+                                        <td class="px-3 py-2.5">Warnings silenciosos</td>
+                                        <td class="px-3 py-2.5">Excepciones opcionales</td>
+                                        <td class="px-3 py-2.5">Excepciones configurables</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-3 py-2.5 font-semibold">Recomendación</td>
+                                        <td class="px-3 py-2.5 text-rose-600 dark:text-rose-400 font-semibold">Nunca</td>
+                                        <td class="px-3 py-2.5 text-cyan-600 dark:text-cyan-400 font-semibold">Proyectos solo MySQL</td>
+                                        <td class="px-3 py-2.5 text-emerald-600 dark:text-emerald-400 font-semibold">Proyectos multi-motor</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-bold text-cyan-600 dark:text-cyan-400 flex items-center gap-2">
+                            <i class="fa-solid fa-laptop-code"></i> 3. El mismo SELECT en las tres APIs
+                        </h3>
+
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-rose-200 dark:border-rose-800/40 space-y-3">
+                            <span class="bg-rose-500/10 text-rose-600 dark:text-rose-300 border border-rose-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">API antigua: mysql_* (no ejecutable en PHP 7+)</span>
+                            <pre><code class="language-php">&lt;?php
+// ❌ Fatal error en PHP 7+: Call to undefined function mysql_connect()
+$link = mysql_connect('localhost', 'root', 'secret');
+mysql_select_db('tienda', $link);
+
+$result = mysql_query("SELECT * FROM users WHERE id = $id");
+while ($row = mysql_fetch_assoc($result)) {
+    echo $row['email'];
+}
+?&gt;</code></pre>
+                            <p class="text-xs text-rose-600 dark:text-rose-400">Sin prepared statements, sin POO y sin transacciones fiables: código inseguro e imposible de mantener.</p>
+                        </div>
+
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-cyan-200 dark:border-cyan-800/40 space-y-3">
+                            <span class="bg-cyan-500/10 text-cyan-600 dark:text-cyan-300 border border-cyan-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Migración a mysqli (POO + prepared statement)</span>
+                            <pre><code class="language-php">&lt;?php
+$db = new mysqli('localhost', 'root', 'secret', 'tienda');
+$db->set_charset('utf8mb4');
+
+$stmt = $db->prepare('SELECT email FROM users WHERE id = ?');
+$stmt->bind_param('i', $id);
+$stmt->execute();
+
+$result = $stmt->get_result();
+while ($row = $result->fetch_assoc()) {
+    echo htmlspecialchars($row['email']);
+}
+$stmt->close();
+$db->close();
+?&gt;</code></pre>
+                        </div>
+
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-emerald-200 dark:border-emerald-800/40 space-y-3">
+                            <span class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 border border-emerald-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Alternativa moderna: PDO (parámetros con nombre)</span>
+                            <pre><code class="language-php">&lt;?php
+$pdo = new PDO(
+    'mysql:host=localhost;dbname=tienda;charset=utf8mb4',
+    'root',
+    'secret',
+    [
+        PDO::ATTR_ERRMODE            =&gt; PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE =&gt; PDO::FETCH_ASSOC,
+    ]
+);
+
+$stmt = $pdo->prepare('SELECT email FROM users WHERE id = :id');
+$stmt->execute([':id' =&gt; $id]);
+
+foreach ($stmt as $row) {
+    echo htmlspecialchars($row['email']);
+}
+?&gt;</code></pre>
+                            <p class="text-xs text-emerald-600 dark:text-emerald-400">PDO permite cambiar de motor de base de datos sin reescribir toda la capa de acceso a datos.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50 space-y-4">
+                        <h3 class="text-lg font-bold text-cyan-600 dark:text-cyan-400 flex items-center gap-2">
+                            <i class="fa-solid fa-virus"></i> 4. Inyección SQL: código vulnerable vs código seguro
+                        </h3>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="bg-rose-50 dark:bg-rose-950/20 rounded-xl border border-rose-200 dark:border-rose-800/40 p-3">
+                                <p class="text-xs font-semibold text-rose-600 dark:text-rose-400 mb-2">❌ Concatenación directa</p>
+                                <pre><code class="language-php">$id  = $_GET['id']; // "1 OR 1=1"
+$sql = "SELECT * FROM users
+        WHERE id = $id";
+$result = $db-&gt;query($sql);
+// Devuelve TODOS los usuarios</code></pre>
+                            </div>
+                            <div class="bg-emerald-50 dark:bg-emerald-950/20 rounded-xl border border-emerald-200 dark:border-emerald-800/40 p-3">
+                                <p class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 mb-2">✅ Parámetro preparado</p>
+                                <pre><code class="language-php">$stmt = $db-&gt;prepare(
+    'SELECT * FROM users WHERE id = ?'
+);
+$stmt-&gt;bind_param('i', $_GET['id']);
+$stmt-&gt;execute();
+// Solo devuelve 0 o 1 fila</code></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                        <span class="bg-purple-500/10 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Simulador: elige la API y prueba una entrada maliciosa</span>
+                        <div class="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 flex flex-col sm:flex-row gap-3 items-center justify-between">
+                            <div class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                                <div class="flex items-center gap-2">
+                                    <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">API:</label>
+                                    <select id="db_compare_api" class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                                        <option value="mysql_legacy">mysql_* (histórica)</option>
+                                        <option value="mysqli_raw">mysqli + concatenación</option>
+                                        <option value="mysqli_prepared">mysqli + prepared</option>
+                                        <option value="pdo_prepared">PDO + prepared</option>
+                                    </select>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">ID:</label>
+                                    <input type="text" id="db_compare_input" value="1 OR 1=1" class="w-36 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                                </div>
+                            </div>
+                            <button onclick="runDbCompare()" class="w-full sm:w-auto bg-cyan-600 hover:bg-cyan-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-play"></i> Ejecutar comparación
+                            </button>
+                        </div>
+                        <div id="db_compare_out" class="console-output bg-slate-950 text-emerald-400 text-xs p-3 rounded-lg border border-slate-800 hidden"></div>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                        <h3 class="text-lg font-bold text-cyan-600 dark:text-cyan-400 mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-arrows-rotate"></i> 5. Chuleta de migración de mysql_* a mysqli
+                        </h3>
+                        <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700/60">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-slate-100 dark:bg-slate-800 text-xs uppercase tracking-wide text-slate-600 dark:text-slate-300">
+                                    <tr>
+                                        <th class="px-3 py-2.5">Antes (mysql_*)</th>
+                                        <th class="px-3 py-2.5">Ahora (mysqli)</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-200 dark:divide-slate-700/60 text-slate-700 dark:text-slate-300">
+                                    <tr><td class="px-3 py-2 font-mono text-xs">mysql_connect()</td><td class="px-3 py-2 font-mono text-xs text-cyan-600 dark:text-cyan-400">new mysqli() / mysqli_connect()</td></tr>
+                                    <tr><td class="px-3 py-2 font-mono text-xs">mysql_select_db()</td><td class="px-3 py-2 font-mono text-xs text-cyan-600 dark:text-cyan-400">$db-&gt;select_db() / 4.º argumento</td></tr>
+                                    <tr><td class="px-3 py-2 font-mono text-xs">mysql_query()</td><td class="px-3 py-2 font-mono text-xs text-cyan-600 dark:text-cyan-400">$db-&gt;query() / $db-&gt;prepare()</td></tr>
+                                    <tr><td class="px-3 py-2 font-mono text-xs">mysql_fetch_assoc()</td><td class="px-3 py-2 font-mono text-xs text-cyan-600 dark:text-cyan-400">$result-&gt;fetch_assoc()</td></tr>
+                                    <tr><td class="px-3 py-2 font-mono text-xs">mysql_real_escape_string()</td><td class="px-3 py-2 font-mono text-xs text-cyan-600 dark:text-cyan-400">Prepared statements</td></tr>
+                                    <tr><td class="px-3 py-2 font-mono text-xs">mysql_error()</td><td class="px-3 py-2 font-mono text-xs text-cyan-600 dark:text-cyan-400">$db-&gt;error / mysqli_sql_exception</td></tr>
+                                    <tr><td class="px-3 py-2 font-mono text-xs">mysql_close()</td><td class="px-3 py-2 font-mono text-xs text-cyan-600 dark:text-cyan-400">$db-&gt;close()</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="bg-rose-50 dark:bg-rose-950/20 p-4 rounded-xl border border-rose-200 dark:border-rose-800/40">
+                            <h4 class="font-bold text-rose-600 dark:text-rose-400 mb-1 text-sm">mysql_*</h4>
+                            <p class="text-xs text-slate-600 dark:text-slate-400">Solo valor histórico. No lo uses en código nuevo ni en migraciones parciales.</p>
+                        </div>
+                        <div class="bg-cyan-50 dark:bg-cyan-950/20 p-4 rounded-xl border border-cyan-200 dark:border-cyan-800/40">
+                            <h4 class="font-bold text-cyan-600 dark:text-cyan-400 mb-1 text-sm">mysqli</h4>
+                            <p class="text-xs text-slate-600 dark:text-slate-400">Ideal si tu proyecto depende exclusivamente de MySQL/MariaDB y quieres POO o estilo procedural.</p>
+                        </div>
+                        <div class="bg-emerald-50 dark:bg-emerald-950/20 p-4 rounded-xl border border-emerald-200 dark:border-emerald-800/40">
+                            <h4 class="font-bold text-emerald-600 dark:text-emerald-400 mb-1 text-sm">PDO</h4>
+                            <p class="text-xs text-slate-600 dark:text-slate-400">Mejor opción si prevés cambiar de motor o necesitas parámetros con nombre y una API uniforme.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-rose-50 dark:bg-rose-950/30 p-5 rounded-2xl border border-rose-200 dark:border-rose-800/40">
+                        <h3 class="text-lg font-bold text-rose-600 dark:text-rose-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation"></i> 6. Errores comunes y buenas prácticas
+                        </h3>
+                        <ul class="space-y-2 text-sm text-slate-700 dark:text-slate-300">
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-xmark text-rose-500 mt-1"></i><span><strong>Error:</strong> copiar tutoriales antiguos con <code class="text-amber-600 dark:text-amber-300">mysql_query()</code>. Ese código ya no se ejecuta en PHP 7+.</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-xmark text-rose-500 mt-1"></i><span><strong>Error:</strong> creer que cambiar <code class="text-amber-600 dark:text-amber-300">mysql_</code> por <code class="text-amber-600 dark:text-amber-300">mysqli_</code> hace el código seguro. Si sigues concatenando variables, la inyección SQL continúa.</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 dark:text-emerald-400 mt-1"></i><span><strong>Buena Práctica:</strong> migra siempre a prepared statements, define <code class="text-emerald-600 dark:text-emerald-400">utf8mb4</code> y maneja los errores con excepciones, no con <code class="text-amber-600 dark:text-amber-300">or die()</code>.</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- SLIDE 4: mysqli -->
+                <div id="slide-mysqli" class="slide-content space-y-6">
+                    <div class="border-b border-slate-200 dark:border-slate-700/60 pb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="p-3 bg-cyan-500/10 text-cyan-500 dark:text-cyan-400 rounded-xl">
+                                <i class="fa-solid fa-database text-2xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white font-mono">mysqli: conexión, consultas y transacciones</h2>
+                                <p class="text-sm text-slate-500 dark:text-slate-400">API oficial para MySQL/MariaDB con POO, prepared statements y transacciones</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                        <h3 class="text-lg font-bold text-cyan-600 dark:text-cyan-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-info"></i> 1. ¿Para qué sirve?
+                        </h3>
+                        <p class="text-slate-700 dark:text-slate-300 leading-relaxed">
+                            Extensión para conectar y consultar bases de datos MySQL/MariaDB con soporte de sentencias preparadas y transacciones. Es la evolución directa de la antigua <code class="text-amber-600 dark:text-amber-300">mysql_*</code> (eliminada en PHP 7.0). Puedes usarla con estilo POO (recomendado) o procedural.
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                        <h3 class="text-lg font-bold text-cyan-600 dark:text-cyan-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-code"></i> 2. Sintaxis
+                        </h3>
+                        <div class="grid gap-4">
+                            <div>
+                                <p class="text-xs font-semibold text-cyan-600 dark:text-cyan-400 mb-1">Estilo POO (recomendado)</p>
+                                <pre><code class="language-php">$db = new mysqli($host, $user, $pass, $dbname);
+$db-&gt;set_charset('utf8mb4');</code></pre>
+                            </div>
+                            <div>
+                                <p class="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-1">Estilo procedural (heredado)</p>
+                                <pre><code class="language-php">$db = mysqli_connect($host, $user, $pass, $dbname);
+mysqli_set_charset($db, 'utf8mb4');</code></pre>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-3">Ambos estilos usan el mismo motor, pero no conviene mezclarlos en un mismo proyecto. El estilo POO facilita el tipado, las excepciones y las pruebas.</p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                        <h3 class="text-lg font-bold text-cyan-600 dark:text-cyan-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-bolt"></i> 2.1 Manejo moderno de errores
+                        </h3>
+                        <p class="text-slate-700 dark:text-slate-300 text-sm mb-2">Por defecto, <code class="text-amber-600 dark:text-amber-300">mysqli</code> puede fallar de forma silenciosa. Activa excepciones para detectar errores de conexión, SQL o transacción:</p>
+                        <pre><code class="language-php">&lt;?php
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+try {
+    $db = new mysqli($host, $user, $pass, $dbname);
+    $db-&gt;set_charset('utf8mb4');
+} catch (mysqli_sql_exception $e) {
+    error_log($e-&gt;getMessage());
+    exit('No se pudo conectar a la base de datos.');
+}
+?&gt;</code></pre>
+                    </div>
+
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-bold text-cyan-600 dark:text-cyan-400 flex items-center gap-2">
+                            <i class="fa-solid fa-laptop-code"></i> 3. Ejemplos Prácticos & Simulación
+                        </h3>
+
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                            <span class="bg-blue-500/10 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Nivel Básico: Conexión Inicial</span>
+                            <pre><code class="language-php">&lt;?php
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+try {
+    $db = new mysqli('localhost', 'root', 'secret', 'demo');
+    $db-&gt;set_charset('utf8mb4');
+    echo "Conexión exitosa a MySQL 8.0";
+} catch (mysqli_sql_exception $e) {
+    error_log($e-&gt;getMessage());
+    echo "Error de conexión. Revisa el log.";
+}
+?&gt;</code></pre>
+                            <div class="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 flex flex-col sm:flex-row gap-3 items-center justify-between">
+                                <div class="flex items-center gap-2 w-full sm:w-auto">
+                                    <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">Credenciales:</label>
+                                    <select id="mysqli_b1_select" class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                                        <option value="correct">localhost / root / secret (Válido)</option>
+                                        <option value="wrong_pass">localhost / root / wrong_pass (Contraseña Errónea)</option>
+                                    </select>
+                                </div>
+                                <button onclick="runMysqliBasic()" class="w-full sm:w-auto bg-cyan-600 hover:bg-cyan-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Testear Conexión
+                                </button>
+                            </div>
+                            <div id="mysqli_b1_out" class="console-output bg-slate-950 text-emerald-400 text-xs p-3 rounded-lg border border-slate-800 hidden"></div>
+                        </div>
+
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                            <span class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 border border-emerald-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Nivel Intermedio: Prepared Statements</span>
+                            <pre><code class="language-php">&lt;?php
+$stmt = $db-&gt;prepare('SELECT id, email FROM users WHERE email = ?');
+$stmt-&gt;bind_param('s', $email); // 's' = string
+$stmt-&gt;execute();
+
+$result = $stmt-&gt;get_result();
+while ($row = $result-&gt;fetch_assoc()) {
+    echo htmlspecialchars($row['email']);
+}
+
+$stmt-&gt;close();
+?&gt;</code></pre>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                                <div class="bg-slate-100 dark:bg-slate-800 rounded-lg p-2 text-center"><code class="text-amber-600 dark:text-amber-300">i</code> = integer</div>
+                                <div class="bg-slate-100 dark:bg-slate-800 rounded-lg p-2 text-center"><code class="text-amber-600 dark:text-amber-300">d</code> = double</div>
+                                <div class="bg-slate-100 dark:bg-slate-800 rounded-lg p-2 text-center"><code class="text-amber-600 dark:text-amber-300">s</code> = string</div>
+                                <div class="bg-slate-100 dark:bg-slate-800 rounded-lg p-2 text-center"><code class="text-amber-600 dark:text-amber-300">b</code> = blob</div>
+                            </div>
+                            <div class="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 flex flex-col sm:flex-row gap-3 items-center justify-between">
+                                <div class="flex items-center gap-2 w-full sm:w-auto">
+                                    <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">Email a buscar:</label>
+                                    <input type="text" id="mysqli_int_input" value="user@domain.com" class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                </div>
+                                <button onclick="runMysqliInter()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Ejecutar Statement
+                                </button>
+                            </div>
+                            <div id="mysqli_int_out" class="console-output bg-slate-950 text-emerald-400 text-xs p-3 rounded-lg border border-slate-800 hidden"></div>
+                        </div>
+
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                            <span class="bg-purple-500/10 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Nivel Avanzado: Transacción Bancaria ACID</span>
+                            <pre><code class="language-php">&lt;?php
+$db-&gt;begin_transaction();
+
+try {
+    $db-&gt;query("UPDATE cuentas SET saldo = saldo - 500 WHERE id = 1");
+
+    $saldo = $db-&gt;query("SELECT saldo FROM cuentas WHERE id = 1")
+                -&gt;fetch_column();
+
+    if ($saldo &lt; 0) {
+        throw new RuntimeException('Fondos insuficientes');
+    }
+
+    $db-&gt;query("UPDATE cuentas SET saldo = saldo + 500 WHERE id = 2");
+    $db-&gt;commit();
+} catch (Throwable $e) {
+    $db-&gt;rollback();
+    error_log($e-&gt;getMessage());
+}
+?&gt;</code></pre>
+                            <div class="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 flex flex-col sm:flex-row gap-3 items-center justify-between">
+                                <div class="flex items-center gap-2 w-full sm:w-auto">
+                                    <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">Escenario:</label>
+                                    <select id="mysqli_adv_select" class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                        <option value="success">Transacción Exitosa (Commit)</option>
+                                        <option value="fail">Fallo en Fondos (Rollback)</option>
+                                    </select>
+                                </div>
+                                <button onclick="runMysqliAdv()" class="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Simular Transacción
+                                </button>
+                            </div>
+                            <div id="mysqli_adv_out" class="console-output bg-slate-950 text-emerald-400 text-xs p-3 rounded-lg border border-slate-800 hidden"></div>
+                        </div>
+
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                            <span class="bg-fuchsia-500/10 text-fuchsia-600 dark:text-fuchsia-300 border border-fuchsia-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Nivel Experto: CRUD con prepared statements</span>
+                            <pre><code class="language-php">&lt;?php
+// INSERT seguro: los tipos 'ss' indican dos strings
+$stmt = $db-&gt;prepare(
+    'INSERT INTO users (email, nombre) VALUES (?, ?)'
+);
+$stmt-&gt;bind_param('ss', $email, $nombre);
+$stmt-&gt;execute();
+
+echo 'ID insertado: ' . $db-&gt;insert_id;
+$stmt-&gt;close();
+?&gt;</code></pre>
+                            <div class="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 flex flex-col sm:flex-row gap-3 items-center justify-between">
+                                <div class="flex items-center gap-2 w-full sm:w-auto">
+                                    <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">Operación:</label>
+                                    <select id="mysqli_crud_select" class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
+                                        <option value="insert">INSERT (nuevo usuario)</option>
+                                        <option value="update">UPDATE (cambiar email)</option>
+                                        <option value="delete">DELETE (eliminar usuario)</option>
+                                    </select>
+                                </div>
+                                <button onclick="runMysqliCrud()" class="w-full sm:w-auto bg-fuchsia-600 hover:bg-fuchsia-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Ejecutar CRUD
+                                </button>
+                            </div>
+                            <div id="mysqli_crud_out" class="console-output bg-slate-950 text-emerald-400 text-xs p-3 rounded-lg border border-slate-800 hidden"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-rose-50 dark:bg-rose-950/30 p-5 rounded-2xl border border-rose-200 dark:border-rose-800/40">
+                        <h3 class="text-lg font-bold text-rose-600 dark:text-rose-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation"></i> 4. Errores comunes y buenas prácticas
+                        </h3>
+                        <ul class="space-y-2 text-sm text-slate-700 dark:text-slate-300">
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-xmark text-rose-500 mt-1"></i><span><strong>Error:</strong> concatenar variables en la consulta. Los prepared statements no son opcionales: son la defensa principal contra inyección SQL.</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-xmark text-rose-500 mt-1"></i><span><strong>Error:</strong> usar <code class="text-amber-600 dark:text-amber-300">or die()</code> o mostrar <code class="text-amber-600 dark:text-amber-300">$db-&gt;error</code> al usuario. Filtra información sensible y registra el error en el log.</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-xmark text-rose-500 mt-1"></i><span><strong>Error:</strong> olvidar <code class="text-amber-600 dark:text-amber-300">set_charset('utf8mb4')</code>. Sin ello pueden aparecer caracteres corruptos y problemas con emojis.</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 dark:text-emerald-400 mt-1"></i><span><strong>Buena Práctica:</strong> cierra <code class="text-emerald-600 dark:text-emerald-400">$stmt</code> y <code class="text-emerald-600 dark:text-emerald-400">$db</code> al terminar, usa un usuario de BD con privilegios mínimos y envuelve las transacciones en <code class="text-emerald-600 dark:text-emerald-400">try/catch</code>.</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- SLIDE 5: print_r -->
+                <div id="slide-print_r" class="slide-content space-y-6">
+                    <div class="border-b border-slate-200 dark:border-slate-700/60 pb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="p-3 bg-rose-500/10 text-rose-500 dark:text-rose-400 rounded-xl">
+                                <i class="fa-solid fa-bug text-2xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white font-mono">print_r()</h2>
+                                <p class="text-sm text-slate-500 dark:text-slate-400">Inspección de estructuras de datos y depuración</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                        <h3 class="text-lg font-bold text-rose-600 dark:text-rose-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-info"></i> 1. ¿Para qué sirve?
+                        </h3>
+                        <p class="text-slate-700 dark:text-slate-300 leading-relaxed">
+                            Imprime de forma legible arreglos y objetos en pantalla o los captura como string con su parámetro <code class="text-amber-600 dark:text-amber-300">$return = true</code>.
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                        <h3 class="text-lg font-bold text-rose-600 dark:text-rose-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-code"></i> 2. Sintaxis
+                        </h3>
+                        <pre><code class="language-php">print_r(mixed $value, bool $return = false): string|bool</code></pre>
+                    </div>
+
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-bold text-rose-600 dark:text-rose-400 flex items-center gap-2">
+                            <i class="fa-solid fa-laptop-code"></i> 3. Ejemplos Prácticos & Simulación
+                        </h3>
+
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                            <span class="bg-blue-500/10 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Nivel Básico: Array Asociativo</span>
+                            <pre><code class="language-php">&lt;?php
+$usuario = ["nombre" => "Carlos", "edad" => 30];
+print_r($usuario);
+?&gt;</code></pre>
+                            <div class="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 flex items-center justify-between">
+                                <span class="text-xs text-slate-600 dark:text-slate-300 font-medium">Inspeccionar Estructura</span>
+                                <button onclick="runPrintRBasic()" class="bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Imprimir print_r
+                                </button>
+                            </div>
+                            <div id="print_r_b1_out" class="console-output bg-slate-950 text-emerald-400 text-xs p-3 rounded-lg border border-slate-800 hidden"></div>
+                        </div>
+
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                            <span class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 border border-emerald-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Nivel Intermedio: Helper con HTML &lt;pre&gt;</span>
+                            <pre><code class="language-php">&lt;?php
+echo '&lt;pre&gt;';
+print_r($matrizCompleja);
+echo '&lt;/pre&gt;';
+?&gt;</code></pre>
+                            <div class="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 flex items-center justify-between">
+                                <span class="text-xs text-slate-600 dark:text-slate-300 font-medium">Ver Formateado Bonito</span>
+                                <button onclick="runPrintRInter()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Debug HTML
+                                </button>
+                            </div>
+                            <div id="print_r_int_out" class="console-output bg-slate-950 text-emerald-400 text-xs p-3 rounded-lg border border-slate-800 hidden"></div>
+                        </div>
+
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                            <span class="bg-purple-500/10 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Nivel Avanzado: Captura en String ($return = true)</span>
+                            <pre><code class="language-php">&lt;?php
+$logString = print_r($data, true);
+file_put_contents('app.log', $logString);
+?&gt;</code></pre>
+                            <div class="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 flex items-center justify-between">
+                                <span class="text-xs text-slate-600 dark:text-slate-300 font-medium">Capturar para Log sin renderizar</span>
+                                <button onclick="runPrintRAdv()" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Simular Logging
+                                </button>
+                            </div>
+                            <div id="print_r_adv_out" class="console-output bg-slate-950 text-emerald-400 text-xs p-3 rounded-lg border border-slate-800 hidden"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-rose-50 dark:bg-rose-950/30 p-5 rounded-2xl border border-rose-200 dark:border-rose-800/40">
+                        <h3 class="text-lg font-bold text-rose-600 dark:text-rose-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation"></i> 4. Errores Comunes
+                        </h3>
+                        <p class="text-sm text-slate-700 dark:text-slate-300">
+                            Nunca dejar llamados de <code class="text-amber-600 dark:text-amber-300">print_r()</code> activos en producción para evitar fuga de información.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- SLIDE 6: require -->
+                <div id="slide-require" class="slide-content space-y-6">
+                    <div class="border-b border-slate-200 dark:border-slate-700/60 pb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="p-3 bg-purple-500/10 text-purple-500 dark:text-purple-400 rounded-xl">
+                                <i class="fa-solid fa-file-import text-2xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white font-mono">require(): inclusión obligatoria</h2>
+                                <p class="text-sm text-slate-500 dark:text-slate-400">Inclusión obligatoria de archivos externos</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                        <h3 class="text-lg font-bold text-purple-600 dark:text-purple-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-info"></i> 1. ¿Para qué sirve?
+                        </h3>
+                        <p class="text-slate-700 dark:text-slate-300 leading-relaxed">
+                            Incluye y evalúa el archivo especificado. Si el archivo no existe, lanza un <strong class="text-rose-600 dark:text-rose-400">Fatal Error</strong> y detiene la aplicación. Es la opción correcta para dependencias críticas: configuración, conexión a base de datos, clases o funciones sin las cuales la app no puede continuar.
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                        <h3 class="text-lg font-bold text-purple-600 dark:text-purple-400 mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-table-list"></i> 1.1 Las cuatro variantes de inclusión
+                        </h3>
+                        <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700/60">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-slate-100 dark:bg-slate-800 text-xs uppercase tracking-wide text-slate-600 dark:text-slate-300">
+                                    <tr>
+                                        <th class="px-3 py-2.5">Directiva</th>
+                                        <th class="px-3 py-2.5">Si el archivo falta</th>
+                                        <th class="px-3 py-2.5">¿Repite la carga?</th>
+                                        <th class="px-3 py-2.5">Uso típico</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-200 dark:divide-slate-700/60 text-slate-700 dark:text-slate-300">
+                                    <tr>
+                                        <td class="px-3 py-2.5 font-mono font-semibold text-purple-600 dark:text-purple-400">include</td>
+                                        <td class="px-3 py-2.5">Warning y continúa</td>
+                                        <td class="px-3 py-2.5">Sí</td>
+                                        <td class="px-3 py-2.5">Fragmentos opcionales (banners, widgets)</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-3 py-2.5 font-mono font-semibold text-purple-600 dark:text-purple-400">include_once</td>
+                                        <td class="px-3 py-2.5">Warning y continúa</td>
+                                        <td class="px-3 py-2.5 text-emerald-600 dark:text-emerald-400">No</td>
+                                        <td class="px-3 py-2.5">Helpers opcionales</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-3 py-2.5 font-mono font-semibold text-purple-600 dark:text-purple-400">require</td>
+                                        <td class="px-3 py-2.5 text-rose-600 dark:text-rose-400 font-semibold">Fatal Error y detiene</td>
+                                        <td class="px-3 py-2.5">Sí</td>
+                                        <td class="px-3 py-2.5">Dependencias obligatorias y templates</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-3 py-2.5 font-mono font-semibold text-purple-600 dark:text-purple-400">require_once</td>
+                                        <td class="px-3 py-2.5 text-rose-600 dark:text-rose-400 font-semibold">Fatal Error y detiene</td>
+                                        <td class="px-3 py-2.5 text-emerald-600 dark:text-emerald-400">No</td>
+                                        <td class="px-3 py-2.5">Clases, funciones, configuración y bootstrap</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-3">Regla práctica: si el archivo define clases o funciones, usa <code class="text-amber-600 dark:text-amber-300">*_once</code>; si solo imprime HTML o devuelve datos, <code class="text-amber-600 dark:text-amber-300">require</code> o <code class="text-amber-600 dark:text-amber-300">include</code> suele ser suficiente.</p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                        <h3 class="text-lg font-bold text-purple-600 dark:text-purple-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-code"></i> 2. Sintaxis
+                        </h3>
+                        <pre><code class="language-php">require __DIR__ . '/header.php';</code></pre>
+                    </div>
+
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-bold text-purple-600 dark:text-purple-400 flex items-center gap-2">
+                            <i class="fa-solid fa-laptop-code"></i> 3. Ejemplos Prácticos & Simulación
+                        </h3>
+
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                            <span class="bg-blue-500/10 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Nivel Básico: Componente Obligatorio</span>
+                            <pre><code class="language-php">&lt;?php
+require '$ARCHIVO';
+echo "Cargado correctamente.";
+?&gt;</code></pre>
+                            <div class="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 flex flex-col sm:flex-row gap-3 items-center justify-between">
+                                <div class="flex items-center gap-2 w-full sm:w-auto">
+                                    <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">Archivo:</label>
+                                    <select id="require_b1_select" class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                        <option value="exist">header.php (Existe)</option>
+                                        <option value="missing">missing_file.php (No existe)</option>
+                                    </select>
+                                </div>
+                                <button onclick="runRequireBasic()" class="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Ejecutar require
+                                </button>
+                            </div>
+                            <div id="require_b1_out" class="console-output bg-slate-950 text-emerald-400 text-xs p-3 rounded-lg border border-slate-800 hidden"></div>
+                        </div>
+
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                            <span class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 border border-emerald-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Nivel Intermedio: Retornar Arreglos de Configuración</span>
+                            <pre><code class="language-php">&lt;?php
+$config = require 'config/database.php';
+echo "Host: " . $config['host'];
+?&gt;</code></pre>
+                            <div class="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 flex items-center justify-between">
+                                <span class="text-xs text-slate-600 dark:text-slate-300 font-medium">Cargar Configuración</span>
+                                <button onclick="runRequireInter()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Cargar Config
+                                </button>
+                            </div>
+                            <div id="require_int_out" class="console-output bg-slate-950 text-emerald-400 text-xs p-3 rounded-lg border border-slate-800 hidden"></div>
+                        </div>
+
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                            <span class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 border border-emerald-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Comparación directa: require vs require_once</span>
+                            <pre><code class="language-php">&lt;?php
+// helpers.php define la función saludar()
+
+require 'helpers.php';      // Carga 1: OK
+require 'helpers.php';      // ❌ Fatal error: Cannot redeclare saludar()
+
+require_once 'helpers.php'; // Carga 1: OK
+require_once 'helpers.php'; // ✅ Ignorado: ya fue incluido
+?&gt;</code></pre>
+                            <div class="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 flex flex-col sm:flex-row gap-3 items-center justify-between">
+                                <div class="flex items-center gap-2 w-full sm:w-auto">
+                                    <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">Directiva:</label>
+                                    <select id="require_compare_select" class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                        <option value="require">require (dos veces)</option>
+                                        <option value="require_once">require_once (dos veces)</option>
+                                    </select>
+                                </div>
+                                <button onclick="runRequireCompare()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Simular doble inclusión
+                                </button>
+                            </div>
+                            <div id="require_compare_out" class="console-output bg-slate-950 text-emerald-400 text-xs p-3 rounded-lg border border-slate-800 hidden"></div>
+                        </div>
+
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                            <span class="bg-purple-500/10 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Nivel Avanzado: Autoloader Autónomo</span>
+                            <pre><code class="language-php">&lt;?php
+spl_autoload_register(function ($class) {
+    $file = __DIR__ . "/src/{$class}.php";
+    if (file_exists($file)) require $file;
+});
+?&gt;</code></pre>
+                            <div class="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 flex items-center justify-between">
+                                <span class="text-xs text-slate-600 dark:text-slate-300 font-medium">Instanciar Clase 'UserService'</span>
+                                <button onclick="runRequireAdv()" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Autoload Class
+                                </button>
+                            </div>
+                            <div id="require_adv_out" class="console-output bg-slate-950 text-emerald-400 text-xs p-3 rounded-lg border border-slate-800 hidden"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-rose-50 dark:bg-rose-950/30 p-5 rounded-2xl border border-rose-200 dark:border-rose-800/40">
+                        <h3 class="text-lg font-bold text-rose-600 dark:text-rose-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation"></i> 4. Buenas Prácticas
+                        </h3>
+                        <ul class="space-y-2 text-sm text-slate-700 dark:text-slate-300">
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 dark:text-emerald-400 mt-1"></i><span>Usa siempre <code class="text-emerald-600 dark:text-emerald-400">__DIR__</code> (o <code class="text-emerald-600 dark:text-emerald-400">dirname(__FILE__)</code>) para construir rutas absolutas y evitar fallos según el directorio de trabajo.</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 dark:text-emerald-400 mt-1"></i><span>No uses <code class="text-amber-600 dark:text-amber-300">require</code> con datos que vengan del usuario: permitirías incluir archivos arbitrarios (Local File Inclusion).</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 dark:text-emerald-400 mt-1"></i><span>Recuerda que <code class="text-emerald-600 dark:text-emerald-400">require</code> devuelve el valor del <code class="text-emerald-600 dark:text-emerald-400">return</code> del archivo incluido; por eso se usa para cargar arrays de configuración.</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- SLIDE 7: require_once -->
+                <div id="slide-require_once" class="slide-content space-y-6">
+                    <div class="border-b border-slate-200 dark:border-slate-700/60 pb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="p-3 bg-indigo-500/10 text-indigo-500 dark:text-indigo-400 rounded-xl">
+                                <i class="fa-solid fa-shield-halved text-2xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white font-mono">require_once()</h2>
+                                <p class="text-sm text-slate-500 dark:text-slate-400">Inclusión única garantizada sin duplicados</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                        <h3 class="text-lg font-bold text-indigo-600 dark:text-indigo-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-info"></i> 1. ¿Para qué sirve?
+                        </h3>
+                        <p class="text-slate-700 dark:text-slate-300 leading-relaxed">
+                            Funciona igual a <code class="text-amber-600 dark:text-amber-300">require</code>, pero verifica si el archivo ya se cargó previamente para no incluirlo dos veces y evitar colisiones de funciones/clases. Si el archivo no existe, también lanza un <strong class="text-rose-600 dark:text-rose-400">Fatal Error</strong> y detiene la ejecución.
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                        <h3 class="text-lg font-bold text-indigo-600 dark:text-indigo-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-fingerprint"></i> 1.1 ¿Cómo sabe PHP que un archivo ya fue incluido?
+                        </h3>
+                        <p class="text-slate-700 dark:text-slate-300 text-sm leading-relaxed">
+                            PHP no compara el texto de la ruta: resuelve la ruta real del archivo (<code class="text-amber-600 dark:text-amber-300">realpath</code>) y la guarda en una lista interna de archivos incluidos. Por eso estas dos llamadas se consideran el mismo archivo y la segunda se ignora:
+                        </p>
+                        <pre><code class="language-php">&lt;?php
+require_once __DIR__ . '/../app/helpers.php';
+require_once __DIR__ . '/../app/./helpers.php'; // Misma ruta real: ignorado
+?&gt;</code></pre>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-2">Cuidado con mayúsculas/minúsculas en sistemas sensibles a ellas (Linux) y con enlaces simbólicos: si dos rutas resuelven al mismo archivo real, <code class="text-amber-600 dark:text-amber-300">require_once</code> lo detecta; si apuntan a copias distintas, no.</p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                        <h3 class="text-lg font-bold text-indigo-600 dark:text-indigo-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-code"></i> 2. Sintaxis
+                        </h3>
+                        <pre><code class="language-php">require_once __DIR__ . '/lib/Database.php';</code></pre>
+                    </div>
+
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-bold text-indigo-600 dark:text-indigo-400 flex items-center gap-2">
+                            <i class="fa-solid fa-laptop-code"></i> 3. Ejemplos Prácticos & Simulación
+                        </h3>
+
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                            <span class="bg-blue-500/10 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Nivel Básico: Prevención de Redeclaración</span>
+                            <pre><code class="language-php">&lt;?php
+require_once 'helpers.php';
+require_once 'helpers.php'; // Ignorado automáticamente por PHP
+?&gt;</code></pre>
+                            <div class="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 flex items-center justify-between">
+                                <span class="text-xs text-slate-600 dark:text-slate-300 font-medium">Simular Doble Inclusión</span>
+                                <button onclick="runRequireOnceBasic()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Probar Inclusión
+                                </button>
+                            </div>
+                            <div id="require_once_b1_out" class="console-output bg-slate-950 text-emerald-400 text-xs p-3 rounded-lg border border-slate-800 hidden"></div>
+                        </div>
+
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                            <span class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 border border-emerald-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Nivel Intermedio: Múltiples Módulos</span>
+                            <pre><code class="language-php">&lt;?php
+// Ambos módulos requieren la misma librería compartida
+require_once 'lib/DB.php';
+?&gt;</code></pre>
+                            <div class="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 flex items-center justify-between">
+                                <span class="text-xs text-slate-600 dark:text-slate-300 font-medium">Cargar Módulo Usuarios + Ventas</span>
+                                <button onclick="runRequireOnceInter()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Testear Módulos
+                                </button>
+                            </div>
+                            <div id="require_once_int_out" class="console-output bg-slate-950 text-emerald-400 text-xs p-3 rounded-lg border border-slate-800 hidden"></div>
+                        </div>
+
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                            <span class="bg-purple-500/10 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Nivel Avanzado: Bootstrap de Aplicación</span>
+                            <pre><code class="language-php">&lt;?php
+require_once __DIR__ . '/vendor/autoload.php';
+require_once __DIR__ . '/config/env.php';
+?&gt;</code></pre>
+                            <div class="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 flex items-center justify-between">
+                                <span class="text-xs text-slate-600 dark:text-slate-300 font-medium">Inicializar App Bootstrap</span>
+                                <button onclick="runRequireOnceAdv()" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Bootstrap App
+                                </button>
+                            </div>
+                            <div id="require_once_adv_out" class="console-output bg-slate-950 text-emerald-400 text-xs p-3 rounded-lg border border-slate-800 hidden"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-rose-50 dark:bg-rose-950/30 p-5 rounded-2xl border border-rose-200 dark:border-rose-800/40">
+                        <h3 class="text-lg font-bold text-rose-600 dark:text-rose-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation"></i> 4. Buenas Prácticas
+                        </h3>
+                        <ul class="space-y-2 text-sm text-slate-700 dark:text-slate-300">
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 dark:text-emerald-400 mt-1"></i><span>Ideal para archivos que definen clases, funciones, constantes o configuración: evita el fatal <em>Cannot redeclare</em>.</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 dark:text-emerald-400 mt-1"></i><span>En proyectos modernos, el autoload de Composer (<code class="text-emerald-600 dark:text-emerald-400">vendor/autoload.php</code>) reemplaza la mayoría de estos <code class="text-emerald-600 dark:text-emerald-400">require_once</code> manuales.</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-xmark text-rose-500 mt-1"></i><span>No lo uses como excusa para incluir todo desde cualquier parte: mantén una única responsabilidad y un punto de entrada claro (bootstrap).</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- SLIDE 8: htmlentities -->
+                <div id="slide-htmlentities" class="slide-content space-y-6">
+                    <div class="border-b border-slate-200 dark:border-slate-700/60 pb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="p-3 bg-red-500/10 text-red-500 dark:text-red-400 rounded-xl">
+                                <i class="fa-solid fa-lock text-2xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white font-mono">htmlentities()</h2>
+                                <p class="text-sm text-slate-500 dark:text-slate-400">Protección contra ataques XSS y escape de caracteres HTML</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                        <h3 class="text-lg font-bold text-red-600 dark:text-red-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-info"></i> 1. ¿Para qué sirve?
+                        </h3>
+                        <p class="text-slate-700 dark:text-slate-300 leading-relaxed">
+                            Convierte todos los caracteres aplicables a sus entidades HTML correspondientes para evitar vulnerabilidades XSS.
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                        <h3 class="text-lg font-bold text-red-600 dark:text-red-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-code"></i> 2. Sintaxis
+                        </h3>
+                        <pre><code class="language-php">htmlentities(string $string, int $flags = ENT_QUOTES, string $encoding = "UTF-8"): string</code></pre>
+                    </div>
+
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-bold text-red-600 dark:text-red-400 flex items-center gap-2">
+                            <i class="fa-solid fa-laptop-code"></i> 3. Ejemplos Prácticos & Simulación
+                        </h3>
+
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                            <span class="bg-blue-500/10 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Nivel Básico: Sanitización Básica</span>
+                            <pre><code class="language-php">&lt;?php
+$input = "$USER_INPUT";
+echo htmlentities($input);
+?&gt;</code></pre>
+                            <div class="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 flex flex-col sm:flex-row gap-3 items-center justify-between">
+                                <div class="flex items-center gap-2 w-full sm:w-auto">
+                                    <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">Entrada XSS:</label>
+                                    <!-- BUG FIX: El valor del input debe estar escapado para que el navegador no lo ejecute -->
+                                    <input type="text" id="htmlentities_b1_input" value="&lt;script&gt;alert('XSS!')&lt;/script&gt;" class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-red-500">
+                                </div>
+                                <button onclick="runHtmlEntitiesBasic()" class="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Escapar HTML
+                                </button>
+                            </div>
+                            <div id="htmlentities_b1_out" class="console-output bg-slate-950 text-emerald-400 text-xs p-3 rounded-lg border border-slate-800 hidden"></div>
+                        </div>
+
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                            <span class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 border border-emerald-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Nivel Intermedio: Formulario Seguro (Comillas)</span>
+                            <pre><code class="language-php">&lt;?php
+$comentario = htmlentities($post, ENT_QUOTES, 'UTF-8');
+?&gt;</code></pre>
+                            <div class="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 flex flex-col sm:flex-row gap-3 items-center justify-between">
+                                <div class="flex items-center gap-2 w-full sm:w-auto">
+                                    <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">Comentario con comillas:</label>
+                                    <!-- BUG FIX: Valor escapado para que el navegador no interprete la etiqueta -->
+                                    <input type="text" id="htmlentities_int_input" value="Tom &amp; 'Jerry' &lt;tag&gt;" class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                </div>
+                                <button onclick="runHtmlEntitiesInter()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Probar ENT_QUOTES
+                                </button>
+                            </div>
+                            <div id="htmlentities_int_out" class="console-output bg-slate-950 text-emerald-400 text-xs p-3 rounded-lg border border-slate-800 hidden"></div>
+                        </div>
+
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                            <span class="bg-purple-500/10 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Nivel Avanzado: Helper Global de Escape</span>
+                            <pre><code class="language-php">&lt;?php
+function e($val) {
+    return htmlentities((string)$val, ENT_QUOTES | ENT_HTML5, 'UTF-8', false);
+}
+?&gt;</code></pre>
+                            <div class="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 flex items-center justify-between">
+                                <span class="text-xs text-slate-600 dark:text-slate-300 font-medium">Ejecutar Helper e()</span>
+                                <button onclick="runHtmlEntitiesAdv()" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Probar Helper
+                                </button>
+                            </div>
+                            <div id="htmlentities_adv_out" class="console-output bg-slate-950 text-emerald-400 text-xs p-3 rounded-lg border border-slate-800 hidden"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-rose-50 dark:bg-rose-950/30 p-5 rounded-2xl border border-rose-200 dark:border-rose-800/40">
+                        <h3 class="text-lg font-bold text-rose-600 dark:text-rose-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation"></i> 4. Buenas Prácticas
+                        </h3>
+                        <p class="text-sm text-slate-700 dark:text-slate-300">
+                            Escapar datos ÚNICAMENTE al momento de imprimirlos en el navegador (Output Encoding), NUNCA antes de guardarlos en la BD.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- SLIDE 9: session_start -->
+                <div id="slide-session_start" class="slide-content space-y-6">
+                    <div class="border-b border-slate-200 dark:border-slate-700/60 pb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="p-3 bg-teal-500/10 text-teal-500 dark:text-teal-400 rounded-xl">
+                                <i class="fa-solid fa-user-gear text-2xl"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white font-mono">session_start()</h2>
+                                <p class="text-sm text-slate-500 dark:text-slate-400">Gestión de persistencia de datos y sesiones de usuario</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                        <h3 class="text-lg font-bold text-teal-600 dark:text-teal-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-info"></i> 1. ¿Para qué sirve?
+                        </h3>
+                        <p class="text-slate-700 dark:text-slate-300 leading-relaxed">
+                            Inicializa una nueva sesión o reanuda la existente para persistir variables en la superglobal <code class="text-amber-600 dark:text-amber-300">$_SESSION</code>.
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                        <h3 class="text-lg font-bold text-teal-600 dark:text-teal-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-code"></i> 2. Sintaxis
+                        </h3>
+                        <pre><code class="language-php">session_start(array $options = []): bool</code></pre>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                        <h3 class="text-lg font-bold text-teal-600 dark:text-teal-400 mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-rotate"></i> 2.1 Ciclo de vida de una sesión
+                        </h3>
+                        <div class="grid sm:grid-cols-4 gap-3 text-center">
+                            <div class="bg-teal-50 dark:bg-teal-950/20 border border-teal-200 dark:border-teal-800/40 rounded-xl p-3">
+                                <div class="text-teal-600 dark:text-teal-400 font-bold text-lg">1</div>
+                                <p class="text-xs text-slate-700 dark:text-slate-300 font-semibold mt-1">session_start()</p>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400">Crea o reanuda la sesión y envía la cookie PHPSESSID.</p>
+                            </div>
+                            <div class="bg-teal-50 dark:bg-teal-950/20 border border-teal-200 dark:border-teal-800/40 rounded-xl p-3">
+                                <div class="text-teal-600 dark:text-teal-400 font-bold text-lg">2</div>
+                                <p class="text-xs text-slate-700 dark:text-slate-300 font-semibold mt-1">$_SESSION[...]</p>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400">Lees y escribes datos en el servidor.</p>
+                            </div>
+                            <div class="bg-teal-50 dark:bg-teal-950/20 border border-teal-200 dark:border-teal-800/40 rounded-xl p-3">
+                                <div class="text-teal-600 dark:text-teal-400 font-bold text-lg">3</div>
+                                <p class="text-xs text-slate-700 dark:text-slate-300 font-semibold mt-1">session_write_close()</p>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400">Guarda y libera el bloqueo del archivo de sesión.</p>
+                            </div>
+                            <div class="bg-teal-50 dark:bg-teal-950/20 border border-teal-200 dark:border-teal-800/40 rounded-xl p-3">
+                                <div class="text-teal-600 dark:text-teal-400 font-bold text-lg">4</div>
+                                <p class="text-xs text-slate-700 dark:text-slate-300 font-semibold mt-1">session_destroy()</p>
+                                <p class="text-[11px] text-slate-500 dark:text-slate-400">Elimina la sesión del servidor (logout).</p>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-3">
+                            <strong>Importante:</strong> PHP bloquea el archivo de sesión mientras el script se ejecuta. En peticiones largas o AJAX concurrentes, llama a <code class="text-amber-600 dark:text-amber-300">session_write_close()</code> en cuanto termines de modificar <code class="text-amber-600 dark:text-amber-300">$_SESSION</code> para no serializar las peticiones.
+                        </p>
+                    </div>
+
+                    <div class="bg-slate-50 dark:bg-slate-800/40 p-5 rounded-2xl border border-slate-200 dark:border-slate-700/50">
+                        <h3 class="text-lg font-bold text-teal-600 dark:text-teal-400 mb-3 flex items-center gap-2">
+                            <i class="fa-solid fa-shield-halved"></i> 2.2 Opciones recomendadas de seguridad
+                        </h3>
+                        <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700/60">
+                            <table class="w-full text-sm text-left">
+                                <thead class="bg-slate-100 dark:bg-slate-800 text-xs uppercase tracking-wide text-slate-600 dark:text-slate-300">
+                                    <tr>
+                                        <th class="px-3 py-2.5">Opción</th>
+                                        <th class="px-3 py-2.5">Valor</th>
+                                        <th class="px-3 py-2.5">Efecto</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-200 dark:divide-slate-700/60 text-slate-700 dark:text-slate-300">
+                                    <tr><td class="px-3 py-2 font-mono text-xs">cookie_httponly</td><td class="px-3 py-2 font-mono text-xs text-teal-600 dark:text-teal-400">true</td><td class="px-3 py-2">La cookie no es accesible desde JavaScript (mitiga XSS).</td></tr>
+                                    <tr><td class="px-3 py-2 font-mono text-xs">cookie_samesite</td><td class="px-3 py-2 font-mono text-xs text-teal-600 dark:text-teal-400">'Lax' o 'Strict'</td><td class="px-3 py-2">Limita el envío de la cookie en peticiones cross-site (mitiga CSRF).</td></tr>
+                                    <tr><td class="px-3 py-2 font-mono text-xs">cookie_secure</td><td class="px-3 py-2 font-mono text-xs text-teal-600 dark:text-teal-400">true</td><td class="px-3 py-2">Solo se envía por HTTPS. Obligatorio en producción.</td></tr>
+                                    <tr><td class="px-3 py-2 font-mono text-xs">use_strict_mode</td><td class="px-3 py-2 font-mono text-xs text-teal-600 dark:text-teal-400">1</td><td class="px-3 py-2">Rechaza IDs de sesión no generados por el servidor (anti-fixation).</td></tr>
+                                    <tr><td class="px-3 py-2 font-mono text-xs">gc_maxlifetime</td><td class="px-3 py-2 font-mono text-xs text-teal-600 dark:text-teal-400">1800</td><td class="px-3 py-2">Tiempo de inactividad antes de que la sesión caduque (segundos).</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-bold text-teal-600 dark:text-teal-400 flex items-center gap-2">
+                            <i class="fa-solid fa-laptop-code"></i> 3. Ejemplos Prácticos & Simulación
+                        </h3>
+
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                            <span class="bg-blue-500/10 text-blue-600 dark:text-blue-300 border border-blue-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Nivel Básico: Asignación de Variable</span>
+                            <pre><code class="language-php">&lt;?php
+session_start();
+$_SESSION['user'] = "$NOMBRE_USUARIO";
+echo "Sesión activa para: " . $_SESSION['user'];
+?&gt;</code></pre>
+                            <div class="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 flex flex-col sm:flex-row gap-3 items-center justify-between">
+                                <div class="flex items-center gap-2 w-full sm:w-auto">
+                                    <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">Nombre de Usuario:</label>
+                                    <input type="text" id="session_b1_input" value="Maria" class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-teal-500">
+                                </div>
+                                <button onclick="runSessionBasic()" class="w-full sm:w-auto bg-teal-600 hover:bg-teal-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Iniciar Sesión
+                                </button>
+                            </div>
+                            <div id="session_b1_out" class="console-output bg-slate-950 text-emerald-400 text-xs p-3 rounded-lg border border-slate-800 hidden"></div>
+                        </div>
+
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                            <span class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 border border-emerald-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Nivel Intermedio: Regeneración de ID (Anti-Fixation)</span>
+                            <pre><code class="language-php">&lt;?php
+session_start();
+session_regenerate_id(true); // Nuevo ID seguro
+?&gt;</code></pre>
+                            <div class="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 flex items-center justify-between">
+                                <span class="text-xs text-slate-600 dark:text-slate-300 font-medium">Regenerar Cookie de Sesión</span>
+                                <button onclick="runSessionInter()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Regenerar ID
+                                </button>
+                            </div>
+                            <div id="session_int_out" class="console-output bg-slate-950 text-emerald-400 text-xs p-3 rounded-lg border border-slate-800 hidden"></div>
+                        </div>
+
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                            <span class="bg-purple-500/10 text-purple-600 dark:text-purple-300 border border-purple-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Nivel Avanzado: Configuración de Cookies HttpOnly + SameSite</span>
+                            <pre><code class="language-php">&lt;?php
+session_start([
+    'cookie_httponly' => true,
+    'cookie_samesite' => 'Lax',
+    'cookie_secure'   => true,
+    'use_strict_mode' => true,
+]);
+?&gt;</code></pre>
+                            <div class="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 flex items-center justify-between">
+                                <span class="text-xs text-slate-600 dark:text-slate-300 font-medium">Testear Banderas de Seguridad</span>
+                                <button onclick="runSessionAdv()" class="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Iniciar Sesión Segura
+                                </button>
+                            </div>
+                            <div id="session_adv_out" class="console-output bg-slate-950 text-emerald-400 text-xs p-3 rounded-lg border border-slate-800 hidden"></div>
+                        </div>
+
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                            <span class="bg-fuchsia-500/10 text-fuchsia-600 dark:text-fuchsia-300 border border-fuchsia-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Nivel Experto: login seguro + logout completo</span>
+                            <pre><code class="language-php">&lt;?php
+session_start([
+    'cookie_httponly' =&gt; true,
+    'cookie_samesite' =&gt; 'Lax',
+    'cookie_secure'   =&gt; true,  // Solo HTTPS
+    'use_strict_mode' =&gt; true,
+]);
+
+// 1. Tras validar credenciales
+$_SESSION['user_id'] = $user['id'];
+$_SESSION['role']    = $user['role'];
+session_regenerate_id(true); // Evita fijación de sesión
+
+// 2. Logout
+$_SESSION = [];
+if (ini_get('session.use_cookies')) {
+    $p = session_get_cookie_params();
+    setcookie(session_name(), '', time() - 42000,
+        $p['path'], $p['domain'],
+        $p['secure'], $p['httponly']);
+}
+session_destroy();
+?&gt;</code></pre>
+                            <div class="bg-slate-100 dark:bg-slate-800/80 p-3 rounded-xl border border-slate-200 dark:border-slate-700/50 flex flex-col sm:flex-row gap-3 items-center justify-between">
+                                <div class="flex items-center gap-2 w-full sm:w-auto">
+                                    <label class="text-xs font-semibold text-slate-600 dark:text-slate-300">Acción:</label>
+                                    <select id="session_flow_select" class="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 text-xs rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
+                                        <option value="login">Login correcto</option>
+                                        <option value="access">Acceder a zona privada</option>
+                                        <option value="logout">Logout</option>
+                                    </select>
+                                </div>
+                                <button onclick="runSessionFlow()" class="w-full sm:w-auto bg-fuchsia-600 hover:bg-fuchsia-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center justify-center gap-1.5">
+                                    <i class="fa-solid fa-play"></i> Simular flujo
+                                </button>
+                            </div>
+                            <div id="session_flow_out" class="console-output bg-slate-950 text-emerald-400 text-xs p-3 rounded-lg border border-slate-800 hidden"></div>
+                        </div>
+
+                        <div class="bg-slate-50 dark:bg-slate-900/60 p-4 rounded-xl border border-slate-200 dark:border-slate-700/40 space-y-3">
+                            <span class="bg-slate-500/10 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-transparent text-xs font-semibold px-2.5 py-1 rounded-full">Patrón: mensajes flash de una sola lectura</span>
+                            <pre><code class="language-php">&lt;?php
+session_start();
+
+// Petición 1: guardar el mensaje
+$_SESSION['flash'] = 'Usuario actualizado correctamente';
+
+// Petición 2 (redirección): leer y borrar
+$mensaje = $_SESSION['flash'] ?? null;
+unset($_SESSION['flash']);
+
+echo htmlspecialchars($mensaje ?? '');
+?&gt;</code></pre>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">Los mensajes flash viven un solo ciclo: se muestran una vez y se eliminan para no repetirse al recargar.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-rose-50 dark:bg-rose-950/30 p-5 rounded-2xl border border-rose-200 dark:border-rose-800/40">
+                        <h3 class="text-lg font-bold text-rose-600 dark:text-rose-400 mb-2 flex items-center gap-2">
+                            <i class="fa-solid fa-triangle-exclamation"></i> 4. Errores comunes y buenas prácticas
+                        </h3>
+                        <ul class="space-y-2 text-sm text-slate-700 dark:text-slate-300">
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-xmark text-rose-500 mt-1"></i><span><strong>Error:</strong> llamar a <code class="text-amber-600 dark:text-amber-300">session_start()</code> después de imprimir HTML. Provoca <em>Headers already sent</em>; debe ir al inicio absoluto del script.</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-xmark text-rose-500 mt-1"></i><span><strong>Error:</strong> no regenerar el ID tras el login. Un atacante podría fijar la sesión de la víctima (<em>session fixation</em>).</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-xmark text-rose-500 mt-1"></i><span><strong>Error:</strong> creer que <code class="text-amber-600 dark:text-amber-300">session_destroy()</code> borra la cookie. También hay que vaciar <code class="text-amber-600 dark:text-amber-300">$_SESSION</code> y caducar la cookie con <code class="text-amber-600 dark:text-amber-300">setcookie()</code>.</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 dark:text-emerald-400 mt-1"></i><span><strong>Buena Práctica:</strong> usa HTTPS, <code class="text-emerald-600 dark:text-emerald-400">cookie_httponly</code>, <code class="text-emerald-600 dark:text-emerald-400">cookie_samesite</code>, <code class="text-emerald-600 dark:text-emerald-400">cookie_secure</code> y <code class="text-emerald-600 dark:text-emerald-400">use_strict_mode</code>. No guardes contraseñas ni datos sensibles en la sesión.</span></li>
+                            <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-500 dark:text-emerald-400 mt-1"></i><span><strong>Buena Práctica:</strong> cierra la escritura con <code class="text-emerald-600 dark:text-emerald-400">session_write_close()</code> en procesos largos para liberar el bloqueo del archivo de sesión.</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Footer / Slide Controls -->
+            <footer class="mt-8 pt-4 border-t border-slate-200 dark:border-slate-700/60 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <button id="prev-btn" class="w-full sm:w-auto px-4 py-2 bg-slate-200 hover:bg-slate-300 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2 shadow-sm">
+                    <i class="fa-solid fa-chevron-left"></i> Anterior
+                </button>
+                <div class="text-xs text-slate-500 dark:text-slate-400 font-mono" id="slide-indicator">
+                    Módulo 1 de 11
+                </div>
+                <button id="next-btn" class="w-full sm:w-auto px-4 py-2 bg-php hover:bg-php-dark text-white rounded-xl text-sm font-semibold transition-all flex items-center justify-center gap-2 shadow-lg shadow-php/20">
+                    Siguiente <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </footer>
+
+        </main>
+    </div>
+
+    <!-- JavaScript Syntax & Interactive Simulation Logic -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-clike.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-markup-templating.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-php.min.js"></script>
+
+    <script>
+        // --- HELPER: Escapar HTML para mostrar código de forma segura en la consola ---
+        function escapeHtml(unsafe) {
+            return unsafe
+                 .replace(/&/g, "&amp;")
+                 .replace(/</g, "&lt;")
+                 .replace(/>/g, "&gt;")
+                 .replace(/"/g, "&quot;")
+                 .replace(/'/g, "&#039;");
+        }
+
+        // --- NAVEGACIÓN ---
+        const slides = [
+            'welcome',
+            'in_array',
+            'is_array',
+            'is_file',
+            'mysql_vs_mysqli',
+            'mysqli',
+            'print_r',
+            'require',
+            'require_once',
+            'htmlentities',
+            'session_start'
+        ];
+
+        let currentSlideIndex = 0;
+
+        function switchSlide(slideId) {
+            const targetIndex = slides.indexOf(slideId);
+            if (targetIndex === -1) return;
+
+            currentSlideIndex = targetIndex;
+
+            document.querySelectorAll('.slide-content').forEach(slide => {
+                slide.classList.remove('active');
+            });
+
+            const activeSlide = document.getElementById(`slide-${slideId}`);
+            if (activeSlide) {
+                activeSlide.classList.add('active');
+            }
+
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-php', 'text-white', 'shadow-md');
+                btn.classList.add('text-slate-600', 'dark:text-slate-400', 'hover:text-slate-900', 'dark:hover:text-slate-200', 'hover:bg-slate-100', 'dark:hover:bg-slate-800/60');
+            });
+
+            const activeNavBtn = document.querySelector(`.nav-btn[onclick="switchSlide('${slideId}')"]`);
+            if (activeNavBtn) {
+                activeNavBtn.classList.remove('text-slate-600', 'dark:text-slate-400', 'hover:text-slate-900', 'dark:hover:text-slate-200', 'hover:bg-slate-100', 'dark:hover:bg-slate-800/60');
+                activeNavBtn.classList.add('active', 'bg-php', 'text-white', 'shadow-md');
+            }
+
+            document.getElementById('slide-indicator').textContent = `Módulo ${currentSlideIndex + 1} de ${slides.length}`;
+            document.getElementById('prev-btn').disabled = currentSlideIndex === 0;
+            document.getElementById('next-btn').disabled = currentSlideIndex === slides.length - 1;
+
+            document.getElementById('prev-btn').style.opacity = currentSlideIndex === 0 ? '0.4' : '1';
+            document.getElementById('next-btn').style.opacity = currentSlideIndex === slides.length - 1 ? '0.4' : '1';
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            Prism.highlightAll();
+        }
+
+        document.getElementById('prev-btn').addEventListener('click', () => {
+            if (currentSlideIndex > 0) switchSlide(slides[currentSlideIndex - 1]);
+        });
+
+        document.getElementById('next-btn').addEventListener('click', () => {
+            if (currentSlideIndex < slides.length - 1) switchSlide(slides[currentSlideIndex + 1]);
+        });
+
+        // --- TEMA OSCURO/CLARO ---
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const darkIcon = document.getElementById('theme-toggle-dark-icon');
+        const lightIcon = document.getElementById('theme-toggle-light-icon');
+        const themeText = document.getElementById('theme-toggle-text');
+
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                darkIcon.classList.add('hidden');
+                lightIcon.classList.remove('hidden');
+                themeText.textContent = 'Modo Claro';
+            } else {
+                document.documentElement.classList.add('dark');
+                lightIcon.classList.add('hidden');
+                darkIcon.classList.remove('hidden');
+                themeText.textContent = 'Modo Oscuro';
+            }
+            Prism.highlightAll();
+        }
+
+        themeToggleBtn.addEventListener('click', toggleTheme);
+
+        // --- MENÚ MÓVIL ---
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const sidebar = document.getElementById('sidebar');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('hidden');
+        });
+
+        // --- HELPER CONSOLA ---
+        function showConsole(id, text) {
+            const el = document.getElementById(id);
+            el.innerHTML = `> ${text}`;
+            el.classList.remove('hidden');
+        }
+
+        // --- SIMULADORES INTERACTIVOS ---
+        
+        // 1. in_array
+        function runInArrayBasic() {
+            const val = escapeHtml(document.getElementById('in_array_b1_input').value);
+            const frutas = ["manzana", "banana", "naranja"];
+            if (frutas.includes(val.toLowerCase())) {
+                showConsole('in_array_b1_out', `¡'${val}' encontrada en el arreglo! (Retorna true)`);
+            } else {
+                showConsole('in_array_b1_out', `'${val}' NO se encuentra en el arreglo. (Retorna false)`);
+            }
+        }
+        function runInArrayInter() {
+            const rol = document.getElementById('in_array_int_select').value;
+            const permitidos = ['admin', 'editor', 'superadmin'];
+            if (permitidos.includes(rol)) {
+                showConsole('in_array_int_out', `HTTP 200 OK: Acceso concedido al módulo para el rol '${rol}'.`);
+            } else {
+                showConsole('in_array_int_out', `HTTP 403 Forbidden: El rol '${rol}' NO tiene permisos de acceso.`);
+            }
+        }
+        function runInArrayAdv() {
+            const input = escapeHtml(document.getElementById('in_array_adv_input').value);
+            const codigos = [100, 200, 300];
+            
+            // Simulamos la lógica débil (false) de PHP
+            const loose = codigos.some(c => c == input); 
+            // Simulamos la lógica estricta (true) de PHP. El input siempre es un string, así que nunca será estrictamente igual a un int.
+            const strict = false; 
+            
+            showConsole('in_array_adv_out', `in_array("${input}", [100,200,300], false) => bool(${loose ? 'true' : 'false'})\nin_array("${input}", [100,200,300], true)  => bool(false) [Falla porque '${input}' es String y el array contiene Integers]`);
+        }
+
+        // 2. is_array
+        function runIsArrayBasic() {
+            const choice = document.getElementById('is_array_b1_select').value;
+            let res = "bool(false)";
+            if (choice === 'array') res = "bool(true)";
+            showConsole('is_array_b1_out', `var_dump(is_array($variable)) => ${res}`);
+        }
+        function runIsArrayInter() {
+            const choice = document.getElementById('is_array_int_select').value;
+            if (choice === 'valid') {
+                showConsole('is_array_int_out', `Éxito: json_decode() devolvió un Array válido con 3 elementos.`);
+            } else if (choice === 'invalid') {
+                showConsole('is_array_int_out', `Error: json_decode() devolvió una cadena. is_array() retornó false.`);
+            } else {
+                showConsole('is_array_int_out', `is_array() retornó true, pero el arreglo está vacío.`);
+            }
+        }
+        function runIsArrayAdv() {
+            showConsole('is_array_adv_out', `Arreglo sanitizado recursivamente:\n{\n  "nombre": "Juan",\n  "tags": ["&lt;script&gt;bad()&lt;/script&gt;", "php"]\n}`);
+        }
+
+        // 3. is_file
+        function runIsFileBasic() {
+            const path = document.getElementById('is_file_b1_select').value;
+            if (path === 'config.json') {
+                showConsole('is_file_b1_out', `is_file('/app/config.json') => bool(true) [Es un archivo regular]`);
+            } else if (path === 'uploads') {
+                showConsole('is_file_b1_out', `is_file('/app/uploads/') => bool(false) [Es un directorio, no un archivo]`);
+            } else {
+                showConsole('is_file_b1_out', `is_file('/app/missing.txt') => bool(false) [El archivo no existe]`);
+            }
+        }
+        function runIsFileInter() {
+            const name = escapeHtml(document.getElementById('is_file_int_input').value);
+            if (name === 'home' || name === 'header') {
+                showConsole('is_file_int_out', `Cargando plantilla: views/${name}.php ... OK`);
+            } else {
+                showConsole('is_file_int_out', `404 Not Found: La vista 'views/${name}.php' no fue encontrada por is_file().`);
+            }
+        }
+        function runIsFileAdv() {
+            showConsole('is_file_adv_out', `SecurityException: Intento de Path Traversal bloqueado. El archivo verificado está fuera de '/var/www/storage/'.`);
+        }
+
+        // 4. mysql vs mysqli vs PDO
+        function runDbCompare() {
+            const api = document.getElementById('db_compare_api').value;
+            const raw = document.getElementById('db_compare_input').value.trim() || '1';
+            const val = escapeHtml(raw);
+
+            if (api === 'mysql_legacy') {
+                showConsole('db_compare_out', `Fatal error: Uncaught Error: Call to undefined function mysql_connect()\nLa extensión mysql_* fue eliminada en PHP 7.0.\nAdemás, la consulta "SELECT * FROM users WHERE id = ${val}" era inyectable.`);
+                return;
+            }
+
+            if (api === 'mysqli_raw') {
+                const injected = /(\sOR\s|'|"|--|;)/i.test(raw);
+                showConsole('db_compare_out', `$sql = "SELECT * FROM users WHERE id = ${val}";\n$db->query($sql);\n${injected ? '⚠️ Inyección detectada: la consulta devuelve todas las filas o falla por sintaxis.' : '⚠️ La consulta se ejecuta, pero concatenar variables sigue siendo inseguro.'}`);
+                return;
+            }
+
+            if (api === 'mysqli_prepared') {
+                showConsole('db_compare_out', `$stmt = $db->prepare("SELECT * FROM users WHERE id = ?");\n$stmt->bind_param("i", $id); // "${val}" se convierte a entero\n$stmt->execute();\n✅ 0 o 1 fila. La inyección se neutraliza.`);
+                return;
+            }
+
+            showConsole('db_compare_out', `$stmt = $pdo->prepare("SELECT * FROM users WHERE id = :id");\n$stmt->execute([":id" => "${val}"]);\n✅ 0 o 1 fila. PDO envía el valor como parámetro, nunca como SQL.`);
+        }
+
+        // 5. mysqli
+        function runMysqliBasic() {
+            const cred = document.getElementById('mysqli_b1_select').value;
+            if (cred === 'correct') {
+                showConsole('mysqli_b1_out', `Conexión exitosa a MySQL server 8.0.32 (Thread ID: 42)`);
+            } else {
+                showConsole('mysqli_b1_out', `mysqli_sql_exception: Access denied for user 'root'@'localhost' (using password: YES)`);
+            }
+        }
+        function runMysqliInter() {
+            const email = escapeHtml(document.getElementById('mysqli_int_input').value);
+            showConsole('mysqli_int_out', `$stmt = $db->prepare('SELECT id, email FROM users WHERE email = ?');\n$stmt->bind_param('s', $email); // 's' = string\n$stmt->execute();\n$result = $stmt->get_result();\nwhile ($row = $result->fetch_assoc()) { ... }\n\nParámetro recibido: "${email}"\n✅ Consulta segura. 1 fila retornada.`);
+        }
+        function runMysqliAdv() {
+            const esc = document.getElementById('mysqli_adv_select').value;
+            if (esc === 'success') {
+                showConsole('mysqli_adv_out', `[START TRANSACTION]\n> UPDATE cuentas SET saldo = saldo - 500 WHERE id = 1\n> SELECT saldo FROM cuentas WHERE id = 1  => 1500\n> UPDATE cuentas SET saldo = saldo + 500 WHERE id = 2\n[COMMIT] Transferencia procesada con éxito.`);
+            } else {
+                showConsole('mysqli_adv_out', `[START TRANSACTION]\n> UPDATE cuentas SET saldo = saldo - 500 WHERE id = 1\n> SELECT saldo FROM cuentas WHERE id = 1  => -100\nRuntimeException: Fondos insuficientes\n[ROLLBACK] Estado de cuentas restaurado a la normalidad.`);
+            }
+        }
+
+        function runMysqliCrud() {
+            const op = document.getElementById('mysqli_crud_select').value;
+            if (op === 'insert') {
+                showConsole('mysqli_crud_out', `$stmt = $db->prepare('INSERT INTO users (email, nombre) VALUES (?, ?)');\n$stmt->bind_param('ss', $email, $nombre);\n$stmt->execute();\n\n✅ INSERT ejecutado. ID insertado: 105`);
+            } else if (op === 'update') {
+                showConsole('mysqli_crud_out', `$stmt = $db->prepare('UPDATE users SET email = ? WHERE id = ?');\n$stmt->bind_param('si', $email, $id);\n$stmt->execute();\n\n✅ UPDATE ejecutado. Filas afectadas: 1`);
+            } else {
+                showConsole('mysqli_crud_out', `$stmt = $db->prepare('DELETE FROM users WHERE id = ?');\n$stmt->bind_param('i', $id);\n$stmt->execute();\n\n✅ DELETE ejecutado. Filas afectadas: 1`);
+            }
+        }
+
+        // 5. print_r
+        function runPrintRBasic() {
+            showConsole('print_r_b1_out', `Array\n(\n    [nombre] => Carlos\n    [edad] => 30\n)`);
+        }
+        function runPrintRInter() {
+            showConsole('print_r_int_out', `Array\n(\n    [0] => Array\n        (\n            [prod] => Laptop\n            [price] => 1200\n        )\n)`);
+        }
+        function runPrintRAdv() {
+            showConsole('print_r_adv_out', `Mensaje capturado en string y guardado en '/logs/debug.log' sin imprimir en HTML.`);
+        }
+
+        // 6. require
+        function runRequireBasic() {
+            const choice = document.getElementById('require_b1_select').value;
+            if (choice === 'exist') {
+                showConsole('require_b1_out', `Iniciando require 'header.php'...\nArchivo compilado exitosamente.`);
+            } else {
+                showConsole('require_b1_out', `Fatal Error: require(): Failed opening required 'missing_file.php' (include_path='.') in /app/index.php on line 4.\nExecution Halted.`);
+            }
+        }
+        function runRequireInter() {
+            showConsole('require_int_out', `Configuración cargada desde database.php:\nHost: 127.0.0.1 | DB: mi_tienda | Port: 3306`);
+        }
+        function runRequireAdv() {
+            showConsole('require_adv_out', `Autoloader interceptó 'App\\Services\\UserService'.\nEjecutando: require '/app/src/Services/UserService.php'... Clase instanciada.`);
+        }
+
+        function runRequireCompare() {
+            const mode = document.getElementById('require_compare_select').value;
+            if (mode === 'require') {
+                showConsole('require_compare_out', `require 'helpers.php';      // Carga 1: OK\nrequire 'helpers.php';      // Carga 2: ❌\n\nFatal error: Cannot redeclare saludar() (previously declared in helpers.php:2)\nExecution Halted.`);
+            } else {
+                showConsole('require_compare_out', `require_once 'helpers.php'; // Carga 1: OK\nrequire_once 'helpers.php'; // Carga 2: ✅ Ignorado\n\nSin errores. La función saludar() se declaró una sola vez.`);
+            }
+        }
+
+        // 7. require_once
+        function runRequireOnceBasic() {
+            showConsole('require_once_b1_out', `Llamada 1: require_once 'helpers.php' -> Archivo cargado.\nLlamada 2: require_once 'helpers.php' -> Ignorado (ya existe en memoria). Sin errores.`);
+        }
+        function runRequireOnceInter() {
+            showConsole('require_once_int_out', `Módulo Usuarios: require_once 'DB.php' -> Carga DB.php\nMódulo Ventas: require_once 'DB.php' -> DB.php omitido.\nProceso finalizado correctamente.`);
+        }
+        function runRequireOnceAdv() {
+            showConsole('require_once_adv_out', `Bootstrap inicializado. Se garantizó una sola carga de 'vendor/autoload.php'.`);
+        }
+
+        // 8. htmlentities (CORREGIDO)
+        function runHtmlEntitiesBasic() {
+            const val = document.getElementById('htmlentities_b1_input').value;
+            // Usamos la función escapeHtml para simular el comportamiento de htmlentities()
+            const escaped = escapeHtml(val);
+            showConsole('htmlentities_b1_out', `Cadena convertida a entidades de forma segura:\n${escaped}`);
+        }
+        function runHtmlEntitiesInter() {
+            const val = document.getElementById('htmlentities_int_input').value;
+            const escaped = escapeHtml(val);
+            // Mostramos el código HTML escapado para que no se renderice como un input real en la consola
+            showConsole('htmlentities_int_out', `Formulario Renderizado:\n&lt;input value="${escaped}"&gt;\nENT_QUOTES convirtió comillas simples (') y dobles (") a entidades HTML.`);
+        }
+        function runHtmlEntitiesAdv() {
+            // Escapamos los signos < > de <script> para que se muestren como texto
+            showConsole('htmlentities_adv_out', `Security::e("Tom & 'Jerry' &lt;script&gt;") => "Tom &amp; &#039;Jerry&#039; &lt;script&gt;"`);
+        }
+
+        // 9. session_start
+        function runSessionBasic() {
+            const user = escapeHtml(document.getElementById('session_b1_input').value);
+            showConsole('session_b1_out', `PHPSESSID Cookie enviada: 4b8d91f2a7e...\n$_SESSION['user'] = "${user}" guardado en servidor.\nsession_write_close(); // Libera el bloqueo del archivo de sesión`);
+        }
+        function runSessionInter() {
+            showConsole('session_int_out', `session_regenerate_id(true) ejecutado.\nID anterior inhabilitado. Nuevo ID asignado: 9f8a3c2e1b4... (Fijación de sesión prevenida)`);
+        }
+        function runSessionAdv() {
+            showConsole('session_adv_out', `Sesión iniciada con directivas de seguridad:\n- HttpOnly: True (Inaccesible desde JavaScript)\n- SameSite: Lax (Protección anti CSRF)\n- Secure: True (Exclusivo en HTTPS)`);
+        }
+
+        let simulatedSessionUser = null;
+
+        function runSessionFlow() {
+            const action = document.getElementById('session_flow_select').value;
+
+            if (action === 'login') {
+                simulatedSessionUser = 'maria@demo.com';
+                showConsole('session_flow_out', `session_start([...]);\n$_SESSION['user_id'] = 42;\n$_SESSION['role']    = 'admin';\nsession_regenerate_id(true);\n\n✅ Login completado. PHPSESSID rotado: 9f8a3c2e1b4...`);
+                return;
+            }
+
+            if (action === 'access') {
+                if (simulatedSessionUser) {
+                    showConsole('session_flow_out', `if (!isset($_SESSION['user_id'])) {\n    header('Location: /login.php');\n    exit;\n}\n\n✅ HTTP 200: acceso concedido a ${escapeHtml(simulatedSessionUser)} (rol: admin).`);
+                } else {
+                    showConsole('session_flow_out', `if (!isset($_SESSION['user_id'])) {\n    header('Location: /login.php');\n    exit;\n}\n\n⛔ HTTP 302: no hay sesión activa. Redirigiendo al login.`);
+                }
+                return;
+            }
+
+            simulatedSessionUser = null;
+            showConsole('session_flow_out', `$_SESSION = [];\nsetcookie(session_name(), '', time() - 42000, ...);\nsession_destroy();\n\n✅ Logout completado. Sesión y cookie eliminadas del servidor y del navegador.`);
+        }
+
+        // --- INICIALIZACIÓN ---
+        window.addEventListener('DOMContentLoaded', () => {
+            switchSlide('welcome');
+        });
+    </script>
+</body>
+</html>

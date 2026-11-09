@@ -1,0 +1,6 @@
+htdocs/
+db/
+.git/
+.env
+*.log
+*.md

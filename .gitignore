@@ -1,0 +1,7 @@
+.env
+*.log
+.DS_Store
+db/init/*.sql
+!db/init/.gitkeep
+vendor/
+node_modules/
